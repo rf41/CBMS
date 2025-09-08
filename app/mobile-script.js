@@ -193,6 +193,7 @@ document.getElementById('saveDataForm').addEventListener('submit', async (e) => 
         touchIntensity: document.getElementById('touchInput').value,
         movementPattern: document.getElementById('movementInput').value,
         soundActivity: document.getElementById('soundInput').value,
+        location: document.getElementById('locationInput').value || 'Unknown',
         deviceId: "MOBILE_APP"
     };
     
@@ -229,6 +230,30 @@ document.getElementById('saveDataForm').addEventListener('submit', async (e) => 
         resultDiv.style.display = 'block';
     }
 });
+
+// Get GPS Location Function
+function getGPSLocation() {
+    const locationInput = document.getElementById('locationInput');
+    locationInput.value = 'Fetching location...';
+    
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                locationInput.value = `${lat},${lng}`;
+            },
+            (error) => {
+                locationInput.value = 'Failed to get location';
+                console.error('Error getting location:', error);
+                alert('Please enable location services or check your browser permissions.');
+            }
+        );
+    } else {
+        locationInput.value = 'Geolocation not supported';
+        alert('Geolocation is not supported by your browser.');
+    }
+}
 
 async function testGetLatestData() {
     const limit = document.getElementById('limitInput').value;
@@ -372,6 +397,22 @@ function updateLatestDataDetails() {
     document.getElementById('touchValue').textContent = latest.touch_intensity;
     document.getElementById('movementValue').textContent = latest.movement_pattern;
     document.getElementById('soundValue').textContent = latest.sound_activity;
+    
+    // Display Location
+    const locationValue = document.getElementById('locationValue');
+    const locationLink = document.getElementById('locationLink');
+    if (locationValue) {
+        if (latest.location && latest.location !== 'Unknown' && latest.location.includes(',')) {
+            locationValue.textContent = latest.location;
+            if (locationLink) {
+                locationLink.href = `https://www.google.com/maps?q=${latest.location}`;
+                locationLink.style.display = 'inline-block';
+            }
+        } else {
+            locationValue.textContent = latest.location || 'Unknown';
+            if (locationLink) locationLink.style.display = 'none';
+        }
+    }
 }
 
 function updateAnalysisChart() {
