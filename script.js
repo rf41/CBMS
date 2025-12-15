@@ -1,11 +1,3 @@
-/**
- * Child Behavior Monitoring System
- * Client-side JavaScript for sensor data analysis
- */
-
-// ================================
-// DOM Elements
-// ================================
 const uploadArea = document.getElementById('uploadArea');
 const fileInput = document.getElementById('fileInput');
 const fileInfo = document.getElementById('fileInfo');
@@ -22,7 +14,6 @@ const progressFill = document.getElementById('progressFill');
 const riskExplanation = document.getElementById('riskExplanation');
 const resetBtn = document.getElementById('resetBtn');
 
-// Sensor display elements
 const heartRateValue = document.getElementById('heartRateValue');
 const heartRateStatus = document.getElementById('heartRateStatus');
 const temperatureValue = document.getElementById('temperatureValue');
@@ -34,14 +25,10 @@ const movementStatus = document.getElementById('movementStatus');
 const soundValue = document.getElementById('soundValue');
 const soundStatus = document.getElementById('soundStatus');
 
-// Recommendation elements
 const recommendationTitle = document.getElementById('recommendationTitle');
 const recommendationContent = document.getElementById('recommendationContent');
 
-// Notification element
 const notificationToast = document.getElementById('notificationToast');
-
-// Navigation elements
 const navMenu = document.getElementById('navMenu');
 const menuToggle = document.getElementById("menuToggle");
 
@@ -54,13 +41,6 @@ document.querySelectorAll(".nav-link").forEach(link => {
         navMenu.classList.remove("active");
     });
 });
-// ================================
-// Notification System
-// ================================
-
-/**
- * Show connection notification with sound
- */
 
 function showConnectionNotification() {
     notificationToast.classList.remove('hide');
@@ -75,7 +55,7 @@ function showConnectionNotification() {
 }
 
 /**
- * Play notification sound using Web Audio API
+ * Web Audio API
  */
 function playNotificationSound() {
     try {
@@ -98,10 +78,6 @@ function playNotificationSound() {
         console.log('Could not play notification sound');
     }
 }
-
-// ================================
-// Navigation & Section Management
-// ================================
 
 /**
  * Navigate to a specific section
@@ -143,10 +119,6 @@ document.querySelectorAll('.nav-link').forEach(link => {
     });
 });
 
-// ================================
-// Event Listeners
-// ================================
-
 // Click to upload
 uploadArea.addEventListener('click', () => {
     fileInput.click();
@@ -181,10 +153,6 @@ uploadArea.addEventListener('drop', (e) => {
 
 // Reset button
 resetBtn.addEventListener('click', resetAnalysis);
-
-// ================================
-// File Handling
-// ================================
 
 /**
  * Handle file selection and validation
@@ -223,11 +191,6 @@ function handleFileSelect(file) {
     };
     reader.readAsText(file);
 }
-
-// ================================
-// Data Processing & Analysis
-// ================================
-
 /**
  * Process sensor data and calculate risk score
  * @param {Object} data - Parsed sensor data from JSON file
@@ -282,10 +245,6 @@ function validateData(data) {
         data.hasOwnProperty('soundActivity')
     );
 }
-
-// ================================
-// Individual Sensor Analysis
-// ================================
 
 /**
  * Analyze heart rate data
@@ -400,10 +359,6 @@ function analyzeSoundActivity(activity) {
     }
 }
 
-// ================================
-// Results Display
-// ================================
-
 /**
  * Display analysis results with risk level and explanation
  * @param {Object} data - Original sensor data
@@ -474,10 +429,6 @@ function displayResults(data, riskScore, riskFactors) {
     navigateToSection('analysis');
 }
 
-// ================================
-// Reset Functionality
-// ================================
-
 /**
  * Reset the analysis and return to dashboard
  */
@@ -497,10 +448,6 @@ function resetAnalysis() {
     // Navigate back to dashboard
     navigateToSection('dashboard');
 }
-
-// ================================
-// Sample Data Generator (For Testing)
-// ================================
 
 /**
  * Generate sample JSON data for testing purposes
