@@ -1,3 +1,11 @@
+/**
+ * Child Behavior Monitoring System
+ * Client-side JavaScript for sensor data analysis
+ */
+
+// ================================
+// DOM Elements
+// ================================
 const uploadArea = document.getElementById('uploadArea');
 const fileInput = document.getElementById('fileInput');
 const fileInfo = document.getElementById('fileInfo');
@@ -29,6 +37,67 @@ const soundStatus = document.getElementById('soundStatus');
 // Recommendation elements
 const recommendationTitle = document.getElementById('recommendationTitle');
 const recommendationContent = document.getElementById('recommendationContent');
+
+// Notification element
+const notificationToast = document.getElementById('notificationToast');
+
+// Navigation elements
+const navMenu = document.getElementById('navMenu');
+const menuToggle = document.getElementById("menuToggle");
+
+menuToggle.addEventListener("click", () => {
+    navMenu.classList.toggle("active");
+});
+
+document.querySelectorAll(".nav-link").forEach(link => {
+    link.addEventListener("click", () => {
+        navMenu.classList.remove("active");
+    });
+});
+// ================================
+// Notification System
+// ================================
+
+/**
+ * Show connection notification with sound
+ */
+
+function showConnectionNotification() {
+    notificationToast.classList.remove('hide');
+    notificationToast.classList.add('show');
+
+    playNotificationSound();
+
+    setTimeout(() => {
+        notificationToast.classList.remove('show');
+        notificationToast.classList.add('hide');
+    }, 4000);
+}
+
+/**
+ * Play notification sound using Web Audio API
+ */
+function playNotificationSound() {
+    try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.frequency.value = 800;
+        oscillator.type = 'sine';
+
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.5);
+    } catch (error) {
+        console.log('Could not play notification sound');
+    }
+}
 
 // ================================
 // Navigation & Section Management
@@ -134,12 +203,19 @@ function handleFileSelect(file) {
     fileName.textContent = file.name;
     fileInfo.style.display = 'flex';
 
+    // Show notification
+    showConnectionNotification();
+
     // Read and parse file
     const reader = new FileReader();
     reader.onload = (e) => {
         try {
             const data = JSON.parse(e.target.result);
-            processData(data);
+
+            // Add 3-second delay before processing
+            setTimeout(() => {
+                processData(data);
+            }, 3000);
         } catch (error) {
             alert('Error parsing JSON file. Please ensure the file is valid.');
             console.error('Parse error:', error);
