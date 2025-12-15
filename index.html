@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Child Behavior Monitoring System</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+     <div class="notification-toast" id="notificationToast">
+        <div class="notification-icon">🔗</div>
+        <div class="notification-content">
+            <p class="notification-title">Doll is connected to device</p>
+            <p class="notification-message">Processing sensor data...</p>
+        </div>
+    </div>
+    
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-icon">⚕️</span>
+                <span class="logo-text">Child Behavior Monitoring System</span>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><button class="nav-link active" data-section="home">Home</button></li>
+                <li><button class="nav-link" data-section="dashboard">Dashboard</button></li>
+                <li><button class="nav-link" data-section="analysis">Analysis</button></li>
+                <li><button class="nav-link" data-section="recommendation">Recommendation</button></li>
+            </ul>
+            <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- HOME SECTION -->
+        <section id="home" class="section active">
+            <div class="section-header">
+                <h1>Child Behavior Monitoring System</h1>
+                <p class="section-subtitle">Early Risk Analysis for Behavioral Assessment</p>
+            </div>
+
+            <div class="cards-grid">
+                <div class="card feature-card">
+                    <div class="card-icon">📊</div>
+                    <h3>Smart Analysis</h3>
+                    <p>Advanced sensor data analysis to identify behavioral patterns and risk indicators in real-time.</p>
+                </div>
+
+                <div class="card feature-card">
+                    <div class="card-icon">🔒</div>
+                    <h3>Privacy First</h3>
+                    <p>All data processing happens locally on your device. No data is stored or transmitted to servers.</p>
+                </div>
+
+                <div class="card feature-card">
+                    <div class="card-icon">⚡</div>
+                    <h3>Instant Results</h3>
+                    <p>Get immediate risk assessment with detailed explanations and actionable recommendations.</p>
+                </div>
+
+                <div class="card feature-card">
+                    <div class="card-icon">📋</div>
+                    <h3>Comprehensive Report</h3>
+                    <p>View detailed sensor metrics and personalized recommendations based on the analysis.</p>
+                </div>
+            </div>
+
+            <div class="card info-card">
+                <h2>How It Works</h2>
+                <ol class="info-list">
+                    <li><strong>Upload Data:</strong> Go to the Dashboard and upload a JSON file containing sensor readings</li>
+                    <li><strong>Analysis:</strong> Our system analyzes 5 key behavioral indicators from the sensor data</li>
+                    <li><strong>Risk Assessment:</strong> Get a risk score and status: Low Risk, Needs Observation, or Professional Consultation</li>
+                    <li><strong>Recommendations:</strong> Receive tailored guidance based on the assessment results</li>
+                </ol>
+            </div>
+
+            <div class="card disclaimer-card">
+                <div class="disclaimer-icon">⚠️</div>
+                <h2>Important Disclaimer</h2>
+                <p><strong>This is an educational prototype and NOT a medical diagnosis tool.</strong> This system analyzes behavioral patterns from sensor data but does NOT diagnose autism or any medical condition. Always consult qualified healthcare professionals for proper medical assessment and diagnosis.</p>
+            </div>
+        </section>
+
+        <!-- DASHBOARD SECTION -->
+        <section id="dashboard" class="section">
+            <div class="section-header">
+                <h1>Dashboard</h1>
+                <p class="section-subtitle">Upload and Configure Sensor Data</p>
+            </div>
+
+            <!-- File Upload Card -->
+            <div class="card upload-card">
+                <h2>Upload Sensor Data File</h2>
+                <p class="card-subtitle">Upload a JSON file containing child sensor readings for analysis</p>
+
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📁</div>
+                    <p class="upload-text">Click to upload or drag and drop</p>
+                    <p class="upload-subtext">JSON file only</p>
+                    <input type="file" id="fileInput" accept=".json" hidden>
+                </div>
+
+                <div class="file-info" id="fileInfo" style="display: none;">
+                    <span class="check-icon">✓</span>
+                    <span id="fileName"></span>
+                </div>
+            </div>
+
+            <!-- Data Parameters Info -->
+            <div class="card parameters-card">ó
+                <h2>Required Data Parameters</h2>
+                <p class="card-subtitle">Your JSON file should contain the following fields:</p>
+
+                <div class="parameters-grid">
+                    <div class="parameter-item">
+                        <div class="param-icon">❤️</div>
+                        <h3>Heart Rate</h3>
+                        <p class="param-desc">Measured in beats per minute (bpm)</p>
+                        <p class="param-type">Type: Number | Range: 60-140</p>
+                        <p class="param-example">Example: 85</p>
+                    </div>
+
+                    <div class="parameter-item">
+                        <div class="param-icon">🌡️</div>
+                        <h3>Body Temperature</h3>
+                        <p class="param-desc">Measured in Celsius (°C)</p>
+                        <p class="param-type">Type: Number | Range: 36-39</p>
+                        <p class="param-example">Example: 37.0</p>
+                    </div>
+
+                    <div class="parameter-item">
+                        <div class="param-icon">✋</div>
+                        <h3>Touch Intensity</h3>
+                        <p class="param-desc">Tactile sensitivity level</p>
+                        <p class="param-type">Type: String | Values: "low", "normal", "high"</p>
+                        <p class="param-example">Example: "normal"</p>
+                    </div>
+
+                    <div class="parameter-item">
+                        <div class="param-icon">🚶</div>
+                        <h3>Movement Pattern</h3>
+                        <p class="param-desc">Physical movement classification</p>
+                        <p class="param-type">Type: String | Values: "normal", "repetitive", "extreme"</p>
+                        <p class="param-example">Example: "normal"</p>
+                    </div>
+
+                    <div class="parameter-item">
+                        <div class="param-icon">🔊</div>
+                        <h3>Sound Activity</h3>
+                        <p class="param-desc">Vocalization and sound patterns</p>
+                        <p class="param-type">Type: String | Values: "normal", "frequent", "intense"</p>
+                        <p class="param-example">Example: "normal"</p>
+                    </div>
+
+                    <div class="parameter-item">
+                        <div class="param-icon">📋</div>
+                        <h3>JSON Format</h3>
+                        <p class="param-desc">Complete JSON structure</p>
+                        <p class="param-type">All fields required</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ANALYSIS SECTION -->
+        <section id="analysis" class="section">
+            <div class="section-header">
+                <h1>Analysis</h1>
+                <p class="section-subtitle">Sensor Data Evaluation Results</p>
+            </div>
+
+            <!-- Empty State (Before Upload) -->
+            <div class="empty-state" id="analysisEmpty">
+                <div class="empty-icon">📤</div>
+                <h2>No Data Uploaded Yet</h2>
+                <p>Upload a JSON file from the Dashboard section to see analysis results.</p>
+                <button class="btn btn-primary" onclick="navigateToSection('dashboard')">Go to Dashboard</button>
+            </div>
+
+            <!-- Results Container (After Upload) -->
+            <div id="analysisResults" style="display: none;">
+                <!-- Risk Status Card -->
+                <div class="card risk-card" id="riskCard">
+                    <div class="risk-header">
+                        <h2>Risk Assessment</h2>
+                    </div>
+                    <div class="risk-status" id="riskStatus">
+                        <div class="risk-icon" id="riskIcon"></div>
+                        <div class="risk-label" id="riskLabel"></div>
+                    </div>
+
+                    <!-- Risk Progress Bar -->
+                    <div class="risk-progress-container">
+                        <div class="progress-label">Risk Score Progress</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <div class="progress-info">
+                            <span id="scoreValue">0</span>
+                            <span class="progress-max">/ 10</span>
+                        </div>
+                    </div>
+
+                    <div class="risk-explanation" id="riskExplanation"></div>
+                </div>
+
+                <!-- Sensor Data Cards Grid -->
+                <div class="sensor-grid">
+                    <!-- Heart Rate -->
+                    <div class="card sensor-card">
+                        <div class="sensor-header">
+                            <h3>❤️ Heart Rate</h3>
+                        </div>
+                        <div class="sensor-value" id="heartRateValue">--</div>
+                        <div class="sensor-unit">bpm</div>
+                        <div class="sensor-status" id="heartRateStatus"></div>
+                    </div>
+
+                    <!-- Body Temperature -->
+                    <div class="card sensor-card">
+                        <div class="sensor-header">
+                            <h3>🌡️ Body Temperature</h3>
+                        </div>
+                        <div class="sensor-value" id="temperatureValue">--</div>
+                        <div class="sensor-unit">°C</div>
+                        <div class="sensor-status" id="temperatureStatus"></div>
+                    </div>
+
+                    <!-- Touch Intensity -->
+                    <div class="card sensor-card">
+                        <div class="sensor-header">
+                            <h3>✋ Touch Intensity</h3>
+                        </div>
+                        <div class="sensor-value" id="touchValue">--</div>
+                        <div class="sensor-unit"></div>
+                        <div class="sensor-status" id="touchStatus"></div>
+                    </div>
+
+                    <!-- Movement Pattern -->
+                    <div class="card sensor-card">
+                        <div class="sensor-header">
+                            <h3>🚶 Movement Pattern</h3>
+                        </div>
+                        <div class="sensor-value" id="movementValue">--</div>
+                        <div class="sensor-unit"></div>
+                        <div class="sensor-status" id="movementStatus"></div>
+                    </div>
+
+                    <!-- Sound Activity -->
+                    <div class="card sensor-card">
+                        <div class="sensor-header">
+                            <h3>🔊 Sound Activity</h3>
+                        </div>
+                        <div class="sensor-value" id="soundValue">--</div>
+                        <div class="sensor-unit"></div>
+                        <div class="sensor-status" id="soundStatus"></div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" id="resetBtn">Upload New File</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- RECOMMENDATION SECTION -->
+        <section id="recommendation" class="section">
+            <div class="section-header">
+                <h1>Recommendations</h1>
+                <p class="section-subtitle">Personalized Guidance Based on Analysis</p>
+            </div>
+
+            <!-- Empty State (Before Upload) -->
+            <div class="empty-state" id="recommendationEmpty">
+                <div class="empty-icon">💡</div>
+                <h2>No Recommendations Available Yet</h2>
+                <p>Upload a JSON file from the Dashboard section to receive personalized recommendations.</p>
+                <button class="btn btn-primary" onclick="navigateToSection('dashboard')">Go to Dashboard</button>
+            </div>
+
+            <!-- Recommendations Container (After Upload) -->
+            <div id="recommendationResults" style="display: none;">
+                <div class="card recommendation-card" id="recommendationCard">
+                    <h2 id="recommendationTitle"></h2>
+                    <div id="recommendationContent"></div>
+                </div>
+
+                <!-- Additional Resources -->
+                <div class="card resources-card">
+                    <h2>Next Steps</h2>
+                    <ul class="resources-list">
+                        <li><strong>Document Results:</strong> Keep a record of this assessment for reference and follow-up.</li>
+                        <li><strong>Regular Monitoring:</strong> Conduct regular monitoring sessions to track behavioral patterns over time.</li>
+                        <li><strong>Professional Consultation:</strong> If you have concerns, consult with healthcare professionals or child development specialists.</li>
+                        <li><strong>Data Sharing:</strong> Share results with relevant educators, therapists, or medical professionals as appropriate.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>© 2024 Child Behavior Monitoring System | Educational Prototype | <strong>Not for Medical Diagnosis</strong></p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
