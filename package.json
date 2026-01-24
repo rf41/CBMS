@@ -1,0 +1,24 @@
+{
+  "name": "cbms-dynamic",
+  "version": "1.0.0",
+  "description": "Child Behavior Monitoring System - Dynamic Web with Vercel Postgres",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "@vercel/postgres": "^0.5.1"
+  },
+  "devDependencies": {
+    "vercel": "^33.0.0"
+  },
+  "keywords": [
+    "cbms",
+    "child-monitoring",
+    "esp32",
+    "iot"
+  ],
+  "author": "",
+  "license": "MIT"
+}
