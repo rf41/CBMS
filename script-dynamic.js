@@ -37,15 +37,86 @@ const API_BASE_URL = window.location.hostname === 'localhost'
   ? 'http://localhost:3000' 
   : '';
 
-menuToggle.addEventListener("click", () => {
-    navMenu.classList.toggle("active");
+// Chart instances
+let analysisChartInstance = null;
+let recommendationChartInstance = null;
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    initializeEventListeners();
+    console.log('%c=== CBMS Dynamic Initialized ===', 'color: #2563eb; font-size: 14px; font-weight: bold;');
+    console.log('Navigation should now work correctly');
 });
 
-document.querySelectorAll(".nav-link").forEach(link => {
-    link.addEventListener("click", () => {
-        navMenu.classList.remove("active");
+function initializeEventListeners() {
+    // Menu toggle
+    if (menuToggle && navMenu) {
+        menuToggle.addEventListener("click", () => {
+            navMenu.classList.toggle("active");
+        });
+    }
+
+    // Nav links - close menu when clicked
+    document.querySelectorAll(".nav-link").forEach(link => {
+        link.addEventListener("click", () => {
+            if (navMenu) navMenu.classList.remove("active");
+        });
     });
-});
+
+    // Add event listeners to nav links for navigation
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const sectionId = link.getAttribute('data-section');
+            console.log('Navigating to:', sectionId);
+            navigateToSection(sectionId);
+        });
+    });
+
+    // File upload event listeners
+    if (uploadArea) {
+        uploadArea.addEventListener('click', () => {
+            if (fileInput) fileInput.click();
+        });
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--primary-blue)';
+            uploadArea.style.background = 'rgba(37, 99, 235, 0.1)';
+        });
+
+        uploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--gray-300)';
+            uploadArea.style.background = 'var(--gray-50)';
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--gray-300)';
+            uploadArea.style.background = 'var(--gray-50)';
+            const file = e.dataTransfer.files[0];
+            handleFileSelect(file);
+        });
+    }
+    
+    if (fileInput) {
+        fileInput.addEventListener('change', (e) => {
+            handleFileSelect(e.target.files[0]);
+        });
+    }
+
+    // Reset button
+    if (resetBtn) {
+        resetBtn.addEventListener('click', resetAnalysis);
+    }
+
+    // Save data form
+    const saveDataForm = document.getElementById('saveDataForm');
+    if (saveDataForm) {
+        saveDataForm.addEventListener('submit', handleSaveDataForm);
+    }
+}
 
 function showConnectionNotification() {
     notificationToast.classList.remove('hide');
@@ -124,45 +195,467 @@ document.querySelectorAll('.nav-link').forEach(link => {
     });
 });
 
-// Click to upload
-uploadArea.addEventListener('click', () => {
-    fileInput.click();
-});
+/**
+ * ============================================
+ * TEST API FUNCTIONS (DASHBOARD TAB)
+ * ============================================
+ */
 
-// File selected - Tetap support upload file manual
-fileInput.addEventListener('change', (e) => {
-    handleFileSelect(e.target.files[0]);
-});
-
-// Drag and drop functionality
-uploadArea.addEventListener('dragover', (e) => {
+// Save Data Form Handler
+async function handleSaveDataForm(e) {
     e.preventDefault();
-    uploadArea.style.borderColor = 'var(--primary-blue)';
-    uploadArea.style.background = 'rgba(37, 99, 235, 0.1)';
-});
+    
+    const data = {
+        heartRate: parseInt(document.getElementById('heartRateInput').value),
+        bodyTemperature: parseFloat(document.getElementById('temperatureInput').value),
+        touchIntensity: document.getElementById('touchInput').value,
+        movementPattern: document.getElementById('movementInput').value,
+        soundActivity: document.getElementById('soundInput').value,
+        deviceId: 'WEB_APP'
+    };
 
-uploadArea.addEventListener('dragleave', (e) => {
-    e.preventDefault();
-    uploadArea.style.borderColor = 'var(--gray-300)';
-    uploadArea.style.background = 'var(--gray-50)';
-});
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/save-data`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
 
-uploadArea.addEventListener('drop', (e) => {
-    e.preventDefault();
-    uploadArea.style.borderColor = 'var(--gray-300)';
-    uploadArea.style.background = 'var(--gray-50)';
+        const result = await response.json();
+        const saveResult = document.getElementById('saveResult');
+        
+        if (result.success) {
+            saveResult.style.display = 'block';
+            saveResult.style.background = '#d1fae5';
+            saveResult.style.color = '#065f46';
+            saveResult.innerHTML = `
+                <strong>✓ Success!</strong><br>
+                Data saved with ID: ${result.data.id}<br>
+                <small>Created at: ${new Date(result.data.created_at).toLocaleString()}</small>
+            `;
+        } else {
+            throw new Error(result.error || 'Failed to save data');
+        }
+    } catch (error) {
+        const saveResult = document.getElementById('saveResult');
+        saveResult.style.display = 'block';
+        saveResult.style.background = '#fee2e2';
+        saveResult.style.color = '#991b1b';
+        saveResult.innerHTML = `<strong>✗ Error:</strong> ${error.message}`;
+    }
+}
 
-    const file = e.dataTransfer.files[0];
-    handleFileSelect(file);
-});
+// Test Get Latest Data
+async function testGetLatestData() {
+    const limit = document.getElementById('limitInput').value;
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/get-latest-data?limit=${limit}`);
+        const result = await response.json();
+        
+        displayApiResponse(result);
+    } catch (error) {
+        displayApiResponse({ error: error.message });
+    }
+}
 
-// Reset button
-resetBtn.addEventListener('click', resetAnalysis);
+// Test Get Data by ID
+async function testGetDataById() {
+    const id = document.getElementById('dataIdInput').value;
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/get-data?id=${id}`);
+        const result = await response.json();
+        
+        displayApiResponse(result);
+    } catch (error) {
+        displayApiResponse({ error: error.message });
+    }
+}
+
+// Display API Response
+function displayApiResponse(data) {
+    const card = document.getElementById('apiResponseCard');
+    const responseElement = document.getElementById('apiResponse');
+    
+    card.style.display = 'block';
+    responseElement.textContent = JSON.stringify(data, null, 2);
+    
+    // Scroll to response
+    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
 
 /**
- * Handle file selection and validation (untuk upload manual)
- * @param {File} file - Selected file object
+ * ============================================
+ * ANALYSIS FUNCTIONS
+ * ============================================
  */
+
+async function analyzeLatestData() {
+    try {
+        showConnectionNotification();
+        
+        const response = await fetch(`${API_BASE_URL}/api/get-latest-data?limit=10`);
+        const result = await response.json();
+
+        if (!result.success || result.data.length === 0) {
+            alert('No data available in database');
+            return;
+        }
+
+        const dataArray = result.data.reverse(); // Reverse untuk urutan chronological
+        
+        // Calculate risk scores
+        const riskScores = dataArray.map(data => {
+            const formattedData = {
+                heartRate: data.heart_rate,
+                bodyTemperature: parseFloat(data.body_temperature),
+                touchIntensity: data.touch_intensity,
+                movementPattern: data.movement_pattern,
+                soundActivity: data.sound_activity
+            };
+            return calculateRiskScore(formattedData);
+        });
+
+        // Show results
+        document.getElementById('analysisEmpty').style.display = 'none';
+        document.getElementById('analysisResults').style.display = 'block';
+
+        // Update statistics
+        document.getElementById('totalRecords').textContent = riskScores.length;
+        document.getElementById('avgRisk').textContent = (riskScores.reduce((a, b) => a + b, 0) / riskScores.length).toFixed(1);
+        document.getElementById('maxRisk').textContent = Math.max(...riskScores);
+        document.getElementById('minRisk').textContent = Math.min(...riskScores);
+
+        // Display latest data details
+        const latestData = dataArray[dataArray.length - 1];
+        const formattedLatestData = {
+            heartRate: latestData.heart_rate,
+            bodyTemperature: parseFloat(latestData.body_temperature),
+            touchIntensity: latestData.touch_intensity,
+            movementPattern: latestData.movement_pattern,
+            soundActivity: latestData.sound_activity
+        };
+        
+        displayLatestAnalysis(formattedLatestData, riskScores[riskScores.length - 1]);
+
+        // Draw chart
+        drawAnalysisChart(dataArray, riskScores);
+
+        // Navigate to analysis section
+        navigateToSection('analysis');
+
+    } catch (error) {
+        console.error('Error analyzing data:', error);
+        alert('Failed to analyze data. Please try again.');
+    }
+}
+
+function calculateRiskScore(data) {
+    let score = 0;
+    
+    // Heart rate
+    if (data.heartRate < 60 || data.heartRate > 130) score += 2;
+    else if (data.heartRate < 70 || data.heartRate > 120) score += 1;
+    
+    // Temperature
+    if (data.bodyTemperature < 36.0 || data.bodyTemperature > 38.0) score += 2;
+    else if (data.bodyTemperature < 36.5 || data.bodyTemperature > 37.5) score += 1;
+    
+    // Touch
+    if (data.touchIntensity === 'high') score += 2;
+    else if (data.touchIntensity === 'low') score += 1;
+    
+    // Movement
+    if (data.movementPattern === 'extreme') score += 2;
+    else if (data.movementPattern === 'repetitive') score += 1;
+    
+    // Sound
+    if (data.soundActivity === 'intense') score += 2;
+    else if (data.soundActivity === 'frequent') score += 1;
+    
+    return score;
+}
+
+function displayLatestAnalysis(data, riskScore) {
+    // Analyze sensors
+    analyzeHeartRate(data.heartRate);
+    analyzeTemperature(data.bodyTemperature);
+    analyzeTouchIntensity(data.touchIntensity);
+    analyzeMovementPattern(data.movementPattern);
+    analyzeSoundActivity(data.soundActivity);
+
+    // Display risk score
+    scoreValue.textContent = riskScore;
+    const progressPercentage = (riskScore / 10) * 100;
+    progressFill.style.width = progressPercentage + '%';
+
+    // Determine risk level
+    if (riskScore <= 2) {
+        riskIcon.textContent = '🟢';
+        riskLabel.textContent = 'Low Risk';
+        riskExplanation.innerHTML = '<strong>Assessment:</strong> The sensor data indicates normal behavioral patterns. All parameters are within expected ranges.';
+    } else if (riskScore <= 5) {
+        riskIcon.textContent = '🟡';
+        riskLabel.textContent = 'Needs Observation';
+        riskExplanation.innerHTML = '<strong>Assessment:</strong> Some behavioral indicators require closer attention. Monitor the child more closely.';
+    } else {
+        riskIcon.textContent = '🔴';
+        riskLabel.textContent = 'Professional Consultation';
+        riskExplanation.innerHTML = '<strong>Assessment:</strong> Multiple behavioral indicators suggest professional evaluation is warranted. Please consult with healthcare professionals.';
+    }
+}
+
+function drawAnalysisChart(dataArray, riskScores) {
+    const ctx = document.getElementById('analysisChart');
+    
+    // Destroy previous chart if exists
+    if (analysisChartInstance) {
+        analysisChartInstance.destroy();
+    }
+
+    const labels = dataArray.map((d, i) => `#${d.id}`);
+    
+    analysisChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Risk Score',
+                data: riskScores,
+                borderColor: 'rgb(239, 68, 68)',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                },
+                title: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 10,
+                    ticks: {
+                        stepSize: 1
+                    },
+                    title: {
+                        display: true,
+                        text: 'Risk Score'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Data ID'
+                    }
+                }
+            }
+        }
+    });
+}
+
+/**
+ * ============================================
+ * RECOMMENDATION FUNCTIONS
+ * ============================================
+ */
+
+async function analyzeRecommendations() {
+    try {
+        showConnectionNotification();
+        
+        const response = await fetch(`${API_BASE_URL}/api/get-latest-data?limit=10`);
+        const result = await response.json();
+
+        if (!result.success || result.data.length === 0) {
+            alert('No data available in database');
+            return;
+        }
+
+        const dataArray = result.data.reverse();
+        
+        // Calculate risk scores
+        const riskScores = dataArray.map(data => {
+            const formattedData = {
+                heartRate: data.heart_rate,
+                bodyTemperature: parseFloat(data.body_temperature),
+                touchIntensity: data.touch_intensity,
+                movementPattern: data.movement_pattern,
+                soundActivity: data.sound_activity
+            };
+            return calculateRiskScore(formattedData);
+        });
+
+        // Show results
+        document.getElementById('recommendationEmpty').style.display = 'none';
+        document.getElementById('recommendationResults').style.display = 'block';
+
+        // Calculate average risk
+        const avgRisk = riskScores.reduce((a, b) => a + b, 0) / riskScores.length;
+        
+        // Generate recommendation
+        generateRecommendation(avgRisk, riskScores);
+
+        // Draw chart
+        drawRecommendationChart(dataArray, riskScores);
+
+        // Navigate to recommendation section
+        navigateToSection('recommendation');
+
+    } catch (error) {
+        console.error('Error generating recommendations:', error);
+        alert('Failed to generate recommendations. Please try again.');
+    }
+}
+
+function generateRecommendation(avgRisk, riskScores) {
+    const title = document.getElementById('recommendationTitle');
+    const content = document.getElementById('recommendationContent');
+    
+    title.textContent = 'Recommendations Based on Data Analysis';
+    
+    let recommendation = '<div style="line-height: 1.8;">';
+    recommendation += `<p><strong>Analysis Summary:</strong></p>`;
+    recommendation += `<ul style="margin-left: 20px;">`;
+    recommendation += `<li>Total records analyzed: ${riskScores.length}</li>`;
+    recommendation += `<li>Average risk score: ${avgRisk.toFixed(2)} / 10</li>`;
+    recommendation += `<li>Highest risk: ${Math.max(...riskScores)} / 10</li>`;
+    recommendation += `<li>Lowest risk: ${Math.min(...riskScores)} / 10</li>`;
+    recommendation += `</ul><br>`;
+    
+    if (avgRisk <= 2) {
+        recommendation += `<p><strong>✓ Overall Assessment: Low Risk</strong></p>`;
+        recommendation += `<p>The child's behavioral patterns are generally within normal ranges. Continue with:</p>`;
+        recommendation += `<ul style="margin-left: 20px;">`;
+        recommendation += `<li>Regular monitoring and observation</li>`;
+        recommendation += `<li>Maintain current healthy routines</li>`;
+        recommendation += `<li>Encourage positive behavioral patterns</li>`;
+        recommendation += `<li>Document any changes for future reference</li>`;
+        recommendation += `</ul>`;
+    } else if (avgRisk <= 5) {
+        recommendation += `<p><strong>⚠ Overall Assessment: Moderate - Needs Observation</strong></p>`;
+        recommendation += `<p>Some behavioral indicators warrant closer attention. Recommended actions:</p>`;
+        recommendation += `<ul style="margin-left: 20px;">`;
+        recommendation += `<li>Increase monitoring frequency</li>`;
+        recommendation += `<li>Document specific behavioral patterns</li>`;
+        recommendation += `<li>Communicate with teachers and caregivers</li>`;
+        recommendation += `<li>Schedule follow-up assessment in 1-2 weeks</li>`;
+        recommendation += `<li>Consider environmental factors</li>`;
+        recommendation += `</ul>`;
+    } else {
+        recommendation += `<p><strong>⚠️ Overall Assessment: High Risk - Professional Consultation Recommended</strong></p>`;
+        recommendation += `<p>Multiple indicators suggest professional evaluation. Immediate actions:</p>`;
+        recommendation += `<ul style="margin-left: 20px;">`;
+        recommendation += `<li><strong>Schedule appointment with pediatrician</strong></li>`;
+        recommendation += `<li>Prepare detailed documentation of behaviors</li>`;
+        recommendation += `<li>Consult with child development specialist</li>`;
+        recommendation += `<li>Share assessment data with healthcare professionals</li>`;
+        recommendation += `<li>Do not delay professional evaluation</li>`;
+        recommendation += `<li>Ensure supportive environment for the child</li>`;
+        recommendation += `</ul>`;
+    }
+    
+    recommendation += `</div>`;
+    content.innerHTML = recommendation;
+}
+
+function drawRecommendationChart(dataArray, riskScores) {
+    const ctx = document.getElementById('recommendationChart');
+    
+    // Destroy previous chart if exists
+    if (recommendationChartInstance) {
+        recommendationChartInstance.destroy();
+    }
+
+    const labels = dataArray.map((d, i) => {
+        const date = new Date(d.created_at);
+        return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    });
+    
+    recommendationChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Risk Score Trend',
+                data: riskScores,
+                borderColor: 'rgb(37, 99, 235)',
+                backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                tension: 0.4,
+                fill: true,
+                pointBackgroundColor: riskScores.map(score => {
+                    if (score <= 2) return 'rgb(16, 185, 129)';
+                    if (score <= 5) return 'rgb(245, 158, 11)';
+                    return 'rgb(239, 68, 68)';
+                }),
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                },
+                tooltip: {
+                    callbacks: {
+                        afterLabel: function(context) {
+                            const score = context.parsed.y;
+                            if (score <= 2) return 'Status: Low Risk';
+                            if (score <= 5) return 'Status: Needs Observation';
+                            return 'Status: Professional Consultation';
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 10,
+                    ticks: {
+                        stepSize: 1
+                    },
+                    title: {
+                        display: true,
+                        text: 'Risk Score'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Timestamp'
+                    },
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 45
+                    }
+                }
+            }
+        }
+    });
+}
+
+/**
+ * ============================================
+ * ORIGINAL FUNCTIONS (kept for compatibility)
+ * ============================================
+ */
+
+// Handle file selection and validation (untuk upload manual)
 function handleFileSelect(file) {
     if (!file) return;
 
@@ -521,26 +1014,29 @@ function displayResults(data, riskScore, riskFactors) {
  * Reset the analysis and return to dashboard
  */
 function resetAnalysis() {
-    // Hide results
-    analysisEmpty.style.display = 'block';
-    analysisResults.style.display = 'none';
-    recommendationEmpty.style.display = 'block';
-    recommendationResults.style.display = 'none';
+    if (analysisEmpty) analysisEmpty.style.display = 'block';
+    if (analysisResults) analysisResults.style.display = 'none';
+    if (recommendationEmpty) recommendationEmpty.style.display = 'block';
+    if (recommendationResults) recommendationResults.style.display = 'none';
 
-    // Hide file info
-    fileInfo.style.display = 'none';
-
-    // Reset file input
-    fileInput.value = '';
-
+    // Destroy charts
+    if (analysisChartInstance) {
+        analysisChartInstance.destroy();
+        analysisChartInstance = null;
+    }
+    if (recommendationChartInstance) {
+        recommendationChartInstance.destroy();
+        recommendationChartInstance = null;
+    }
     // Navigate back to dashboard
     navigateToSection('dashboard');
 }
 
-// Auto-fetch latest data saat halaman dimuat (optional - comment jika tidak diperlukan)
-window.addEventListener('DOMContentLoaded', () => {
-    console.log('%c=== Child Behavior Monitoring System (Dynamic) ===', 'color: #2563eb; font-size: 16px; font-weight: bold;');
-    console.log('%cFetch latest data from database: fetchLatestData()', 'color: #6b7280;');
-    console.log('%cFetch data by ID: fetchDataById(1)', 'color: #6b7280;');
-    console.log('%cAPI Base URL:', API_BASE_URL, 'color: #059669;');
-});
+console.log('%c=== Child Behavior Monitoring System (Dynamic) ===', 'color: #2563eb; font-size: 16px; font-weight: bold;');
+console.log('%cAPI Base URL:', API_BASE_URL, 'color: #059669;');
+console.log('%cAvailable functions:', 'color: #6b7280;');
+console.log('  - testGetLatestData()');
+console.log('  - testGetDataById(id)');
+console.log('  - analyzeLatestData()');
+console.log('  - analyzeRecommendations()');
+console.log('  - navigateToSection(sectionId)');

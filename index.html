@@ -6,10 +6,11 @@
     <title>Child Behavior Monitoring System</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <!-- Navigation Bar -->
-     <div class="notification-toast" id="notificationToast">
+    <div class="notification-toast" id="notificationToast">
         <div class="notification-icon">🔗</div>
         <div class="notification-content">
             <p class="notification-title">Doll is connected to device</p>
@@ -27,7 +28,7 @@
             </div>
             <ul class="nav-menu" id="navMenu">
                 <li><button class="nav-link active" data-section="home">Home</button></li>
-                <li><button class="nav-link" data-section="dashboard">Dashboard</button></li>
+                <li><button class="nav-link" data-section="dashboard">Test API</button></li>
                 <li><button class="nav-link" data-section="analysis">Analysis</button></li>
                 <li><button class="nav-link" data-section="recommendation">Recommendation</button></li>
             </ul>
@@ -72,10 +73,10 @@
             <div class="card info-card">
                 <h2>How It Works</h2>
                 <ol class="info-list">
-                    <li><strong>Upload Data:</strong> Go to the Dashboard and upload a JSON file containing sensor readings</li>
-                    <li><strong>Analysis:</strong> Our system analyzes 5 key behavioral indicators from the sensor data</li>
-                    <li><strong>Risk Assessment:</strong> Get a risk score and status: Low Risk, Needs Observation, or Professional Consultation</li>
-                    <li><strong>Recommendations:</strong> Receive tailored guidance based on the assessment results</li>
+                    <li><strong>Test API:</strong> Save new data and test database operations</li>
+                    <li><strong>Analysis:</strong> Our system analyzes latest 10 records from database</li>
+                    <li><strong>Risk Assessment:</strong> View trends with charts and statistics</li>
+                    <li><strong>Recommendations:</strong> Receive tailored guidance based on data analysis</li>
                 </ol>
             </div>
 
@@ -86,84 +87,93 @@
             </div>
         </section>
 
-        <!-- DASHBOARD SECTION -->
+        <!-- TEST API SECTION -->
         <section id="dashboard" class="section">
             <div class="section-header">
-                <h1>Dashboard</h1>
-                <p class="section-subtitle">Upload and Configure Sensor Data</p>
+                <h1>Test API</h1>
+                <p class="section-subtitle">Test Database Operations</p>
             </div>
 
-            <!-- File Upload Card -->
+            <!-- Save Data Card -->
             <div class="card upload-card">
-                <h2>Upload Sensor Data File</h2>
-                <p class="card-subtitle">Upload a JSON file containing child sensor readings for analysis</p>
+                <h2>💾 Save New Data</h2>
+                <p class="card-subtitle">Add new sensor data to database</p>
 
-                <div class="upload-area" id="uploadArea">
-                    <div class="upload-icon">📁</div>
-                    <p class="upload-text">Click to upload or drag and drop</p>
-                    <p class="upload-subtext">JSON file only</p>
-                    <input type="file" id="fileInput" accept=".json" hidden>
-                </div>
+                <div style="max-width: 600px; margin: 0 auto;">
+                    <form id="saveDataForm">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Heart Rate (bpm)</label>
+                                <input type="number" id="heartRateInput" min="40" max="200" value="85" required style="width: 100%; padding: 10px; border: 2px solid #e5e7eb; border-radius: 8px;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Temperature (°C)</label>
+                                <input type="number" id="temperatureInput" step="0.1" min="30" max="45" value="37.0" required style="width: 100%; padding: 10px; border: 2px solid #e5e7eb; border-radius: 8px;">
+                            </div>
+                        </div>
 
-                <div class="file-info" id="fileInfo" style="display: none;">
-                    <span class="check-icon">✓</span>
-                    <span id="fileName"></span>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Touch Intensity</label>
+                                <select id="touchInput" required style="width: 100%; padding: 10px; border: 2px solid #e5e7eb; border-radius: 8px;">
+                                    <option value="low">Low</option>
+                                    <option value="normal" selected>Normal</option>
+                                    <option value="high">High</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Movement</label>
+                                <select id="movementInput" required style="width: 100%; padding: 10px; border: 2px solid #e5e7eb; border-radius: 8px;">
+                                    <option value="normal" selected>Normal</option>
+                                    <option value="repetitive">Repetitive</option>
+                                    <option value="extreme">Extreme</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Sound</label>
+                                <select id="soundInput" required style="width: 100%; padding: 10px; border: 2px solid #e5e7eb; border-radius: 8px;">
+                                    <option value="normal" selected>Normal</option>
+                                    <option value="frequent">Frequent</option>
+                                    <option value="intense">Intense</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Save Data to Database</button>
+                    </form>
+                    <div id="saveResult" style="margin-top: 15px; padding: 15px; border-radius: 8px; display: none;"></div>
                 </div>
             </div>
 
-            <!-- Data Parameters Info -->
-            <div class="card parameters-card">ó
-                <h2>Required Data Parameters</h2>
-                <p class="card-subtitle">Your JSON file should contain the following fields:</p>
-
-                <div class="parameters-grid">
-                    <div class="parameter-item">
-                        <div class="param-icon"><img src="assets/Heart.jpeg" class="card-img"></div>
-                        <h3>Heart Rate</h3>
-                        <p class="param-desc">Measured in beats per minute (bpm)</p>
-                        <p class="param-type">Type: Number | Range: 60-140</p>
-                        <p class="param-example">Example: 85</p>
+            <!-- Get Data Operations -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                <!-- Get Latest Data -->
+                <div class="card">
+                    <h2>📊 Get Latest Data</h2>
+                    <p class="card-subtitle">Fetch most recent records from database</p>
+                    <div style="margin: 20px 0;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Number of records</label>
+                        <input type="number" id="limitInput" min="1" max="100" value="10" style="width: 100%; padding: 10px; border: 2px solid #e5e7eb; border-radius: 8px;">
                     </div>
-
-                    <div class="parameter-item">
-                        <div class="param-icon"><img src="assets/Temperature.jpeg" class="card-img"></div>
-                        <h3>Body Temperature</h3>
-                        <p class="param-desc">Measured in Celsius (°C)</p>
-                        <p class="param-type">Type: Number | Range: 36-39</p>
-                        <p class="param-example">Example: 37.0</p>
-                    </div>
-
-                    <div class="parameter-item">
-                        <div class="param-icon"><img src="assets/Hands.jpeg" class="card-img"></div>
-                        <h3>Touch Intensity</h3>
-                        <p class="param-desc">Tactile sensitivity level</p>
-                        <p class="param-type">Type: String | Values: "low", "normal", "high"</p>
-                        <p class="param-example">Example: "normal"</p>
-                    </div>
-
-                    <div class="parameter-item">
-                        <div class="param-icon"><img src="assets/Person.jpeg" class="card-img"></div>
-                        <h3>Movement Pattern</h3>
-                        <p class="param-desc">Physical movement classification</p>
-                        <p class="param-type">Type: String | Values: "normal", "repetitive", "extreme"</p>
-                        <p class="param-example">Example: "normal"</p>
-                    </div>
-
-                    <div class="parameter-item">
-                        <div class="param-icon"><img src="assets/Megaphone.jpeg" class="card-img"></div>
-                        <h3>Sound Activity</h3>
-                        <p class="param-desc">Vocalization and sound patterns</p>
-                        <p class="param-type">Type: String | Values: "normal", "frequent", "intense"</p>
-                        <p class="param-example">Example: "normal"</p>
-                    </div>
-
-                    <div class="parameter-item">
-                        <div class="param-icon"><img src="assets/List.jpeg" class="card-img"></div>
-                        <h3>JSON Format</h3>
-                        <p class="param-desc">Complete JSON structure</p>
-                        <p class="param-type">All fields required</p>
-                    </div>
+                    <button onclick="testGetLatestData()" class="btn btn-primary" style="width: 100%;">Get Latest Data</button>
                 </div>
+
+                <!-- Get Data by ID -->
+                <div class="card">
+                    <h2>🔍 Get Data by ID</h2>
+                    <p class="card-subtitle">Fetch specific record by ID</p>
+                    <div style="margin: 20px 0;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Data ID</label>
+                        <input type="number" id="dataIdInput" min="1" value="1" style="width: 100%; padding: 10px; border: 2px solid #e5e7eb; border-radius: 8px;">
+                    </div>
+                    <button onclick="testGetDataById()" class="btn btn-primary" style="width: 100%;">Get Data by ID</button>
+                </div>
+            </div>
+
+            <!-- API Response -->
+            <div class="card" id="apiResponseCard" style="display: none;">
+                <h2>API Response</h2>
+                <pre id="apiResponse" style="background: #f9fafb; padding: 20px; border-radius: 8px; overflow-x: auto; max-height: 400px;"></pre>
             </div>
         </section>
 
@@ -171,23 +181,57 @@
         <section id="analysis" class="section">
             <div class="section-header">
                 <h1>Analysis</h1>
-                <p class="section-subtitle">Sensor Data Evaluation Results</p>
+                <p class="section-subtitle">Sensor Data Evaluation from Database</p>
             </div>
 
-            <!-- Empty State (Before Upload) -->
+            <!-- Trigger Button -->
+            <div class="card" style="text-align: center; margin-bottom: 20px;">
+                <h2>📈 Analyze Database Data</h2>
+                <p class="card-subtitle">Analyze latest 10 records from database and show trend</p>
+                <button onclick="analyzeLatestData()" class="btn btn-primary" style="padding: 15px 40px; font-size: 16px;">
+                    <i class="fas fa-chart-line"></i> Analyze Latest 10 Data
+                </button>
+            </div>
+
+            <!-- Empty State (Before Analysis) -->
             <div class="empty-state" id="analysisEmpty">
-                <div class="empty-icon">📤</div>
-                <h2>No Data Uploaded Yet</h2>
-                <p>Upload a JSON file from the Dashboard section to see analysis results.</p>
-                <button class="btn btn-primary" onclick="navigateToSection('dashboard')">Go to Dashboard</button>
+                <div class="empty-icon">📊</div>
+                <h2>Ready to Analyze</h2>
+                <p>Click the button above to analyze the latest data from database.</p>
             </div>
 
-            <!-- Results Container (After Upload) -->
+            <!-- Results Container (After Analysis) -->
             <div id="analysisResults" style="display: none;">
+                <!-- Chart Container -->
+                <div class="card" style="margin-bottom: 20px;">
+                    <h2>📈 Risk Score Trend (Last 10 Data)</h2>
+                    <canvas id="analysisChart" style="max-height: 400px;"></canvas>
+                </div>
+
+                <!-- Summary Statistics -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <div class="card" style="text-align: center;">
+                        <h3 style="color: #6b7280; font-size: 14px; margin-bottom: 10px;">Total Records</h3>
+                        <div style="font-size: 36px; font-weight: bold; color: #2563eb;" id="totalRecords">0</div>
+                    </div>
+                    <div class="card" style="text-align: center;">
+                        <h3 style="color: #6b7280; font-size: 14px; margin-bottom: 10px;">Average Risk</h3>
+                        <div style="font-size: 36px; font-weight: bold; color: #f59e0b;" id="avgRisk">0</div>
+                    </div>
+                    <div class="card" style="text-align: center;">
+                        <h3 style="color: #6b7280; font-size: 14px; margin-bottom: 10px;">Max Risk</h3>
+                        <div style="font-size: 36px; font-weight: bold; color: #ef4444;" id="maxRisk">0</div>
+                    </div>
+                    <div class="card" style="text-align: center;">
+                        <h3 style="color: #6b7280; font-size: 14px; margin-bottom: 10px;">Min Risk</h3>
+                        <div style="font-size: 36px; font-weight: bold; color: #10b981;" id="minRisk">0</div>
+                    </div>
+                </div>
+
                 <!-- Risk Status Card -->
                 <div class="card risk-card" id="riskCard">
                     <div class="risk-header">
-                        <h2>Risk Assessment</h2>
+                        <h2>Latest Data Assessment</h2>
                     </div>
                     <div class="risk-status" id="riskStatus">
                         <div class="risk-icon" id="riskIcon"></div>
@@ -264,7 +308,7 @@
 
                 <!-- Action Buttons -->
                 <div class="action-buttons">
-                    <button class="btn btn-secondary" id="resetBtn">Upload New File</button>
+                    <button class="btn btn-secondary" onclick="resetAnalysis()">Reset Analysis</button>
                 </div>
             </div>
         </section>
@@ -273,19 +317,34 @@
         <section id="recommendation" class="section">
             <div class="section-header">
                 <h1>Recommendations</h1>
-                <p class="section-subtitle">Personalized Guidance Based on Analysis</p>
+                <p class="section-subtitle">Personalized Guidance from Database Analysis</p>
             </div>
 
-            <!-- Empty State (Before Upload) -->
+            <!-- Trigger Button -->
+            <div class="card" style="text-align: center; margin-bottom: 20px;">
+                <h2>💡 Generate Recommendations</h2>
+                <p class="card-subtitle">Analyze latest 10 records and generate recommendations</p>
+                <button onclick="analyzeRecommendations()" class="btn btn-primary" style="padding: 15px 40px; font-size: 16px;">
+                    <i class="fas fa-lightbulb"></i> Analyze & Recommend
+                </button>
+            </div>
+
+            <!-- Empty State (Before Analysis) -->
             <div class="empty-state" id="recommendationEmpty">
                 <div class="empty-icon">💡</div>
-                <h2>No Recommendations Available Yet</h2>
-                <p>Upload a JSON file from the Dashboard section to receive personalized recommendations.</p>
-                <button class="btn btn-primary" onclick="navigateToSection('dashboard')">Go to Dashboard</button>
+                <h2>Ready to Generate Recommendations</h2>
+                <p>Click the button above to analyze data and receive recommendations.</p>
             </div>
 
-            <!-- Recommendations Container (After Upload) -->
+            <!-- Recommendations Container (After Analysis) -->
             <div id="recommendationResults" style="display: none;">
+                <!-- Chart Container -->
+                <div class="card" style="margin-bottom: 20px;">
+                    <h2>📊 Risk Trend Analysis</h2>
+                    <canvas id="recommendationChart" style="max-height: 400px;"></canvas>
+                </div>
+
+                <!-- Main Recommendation Card -->
                 <div class="card recommendation-card" id="recommendationCard">
                     <h2 id="recommendationTitle"></h2>
                     <div id="recommendationContent"></div>
