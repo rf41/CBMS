@@ -892,11 +892,83 @@ body::before {
     }
 
     .section-subtitle {
-        font-size: 1rem;
+        font-size: 0.9rem;
+    }
+
+    /* Test API Section - Forms */
+    form input[type="number"],
+    form select {
+        padding: 8px !important;
+        font-size: 14px !important;
+    }
+
+    form label {
+        font-size: 0.85rem !important;
+    }
+
+    .btn {
+        padding: 12px 20px !important;
+        font-size: 14px !important;
+    }
+
+    /* Test API grid layout - 2 columns to 1 column */
+    #dashboard div[style*="grid-template-columns: 1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+        gap: 15px !important;
+    }
+
+    /* Form grids in Test API */
+    form div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
     }
 
     .sensor-grid {
         grid-template-columns: 1fr;
+    }
+
+    /* Home section feature cards */
+    .cards-grid {
+        grid-template-columns: 1fr !important;
+        gap: var(--space-sm) !important;
+    }
+
+    .feature-card h3 {
+        font-size: 1.1rem;
+    }
+
+    .feature-card p {
+        font-size: 0.9rem;
+    }
+
+    /* Info and disclaimer cards */
+    .info-card h2,
+    .disclaimer-card h2 {
+        font-size: 1.1rem;
+    }
+
+    .info-card p,
+    .disclaimer-card p,
+    .info-list li {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .disclaimer-icon {
+        font-size: 2rem;
+    }
+
+    /* Empty state */
+    .empty-state h2 {
+        font-size: 1.2rem;
+    }
+
+    .empty-state p {
+        font-size: 0.9rem;
+    }
+
+    .empty-icon {
+        font-size: 3rem;
     }
 
     .risk-status {
@@ -928,8 +1000,66 @@ body::before {
         grid-template-columns: 1fr;
     }
 
+    /* API Response pre element */
+    #apiResponse {
+        font-size: 11px !important;
+        padding: 12px !important;
+        max-height: 300px !important;
+    }
+
+    /* Recommendation cards */
+    .recommendation-item {
+        padding: var(--space-sm) !important;
+    }
+
+    .recommendation-item h3 {
+        font-size: 1rem;
+    }
+
+    .recommendation-item p {
+        font-size: 0.85rem;
+    }
+
+    /* Recommendation title */
+    #recommendationTitle {
+        font-size: 1.2rem !important;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    #recommendationContent {
+        font-size: 0.9rem;
+    }
+
+    /* Resources list */
+    .resources-list li {
+        font-size: 0.85rem;
+    }
+
     body {
         padding-top: 70px;
+    }
+
+    /* Chart Mobile Optimization */
+    canvas {
+        max-height: 350px !important;
+    }
+
+    /* Dropdown filter untuk chart */
+    select[id*="ChartFilter"] {
+        font-size: 12px !important;
+        padding: 6px 10px !important;
+    }
+
+    /* Chart container */
+    .card h2 {
+        font-size: 1.1rem;
+    }
+
+    /* Statistics grid di Analysis */
+    div[style*="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr))"] {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
     }
 }
 
@@ -978,5 +1108,89 @@ body::before {
 
     .upload-area {
         padding: var(--space-lg);
+    }
+
+    /* Chart Extra Small Screens */
+    canvas {
+        max-height: 300px !important;
+    }
+
+    /* Chart title lebih kecil */
+    .card h2 {
+        font-size: 1rem;
+    }
+
+    /* Dropdown chart filter */
+    div[style*="justify-content: space-between"] {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 10px !important;
+    }
+
+    select[id*="ChartFilter"] {
+        width: 100%;
+        font-size: 11px !important;
+    }
+
+    /* Statistics cards lebih compact */
+    div[style*="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr))"] {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+    }
+
+    /* Smaller card padding */
+    .card {
+        padding: var(--space-sm) !important;
+    }
+
+    /* Feature card images */
+    .card-img {
+        max-width: 60px !important;
+        height: auto;
+    }
+
+    /* Logo image smaller */
+    .logo-img {
+        max-width: 35px !important;
+    }
+
+    /* Button font and padding */
+    .btn {
+        padding: 10px 16px !important;
+        font-size: 13px !important;
+    }
+
+    /* Section headers */
+    .section-header h1 {
+        font-size: 1.3rem;
+    }
+
+    .section-header {
+        margin-bottom: var(--space-sm);
+    }
+
+    /* Card titles */
+    .card h2 {
+        font-size: 0.95rem;
+    }
+
+    .card h3 {
+        font-size: 1rem;
+    }
+
+    /* Card subtitle */
+    .card-subtitle {
+        font-size: 0.8rem;
+    }
+
+    /* API response smaller font */
+    #apiResponse {
+        font-size: 10px !important;
+        padding: 10px !important;
+    }
+
+    /* Recommendation title even smaller on tiny screens */
+    #recommendationTitle {
+        font-size: 1.1rem !important;
     }
 }

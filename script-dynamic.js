@@ -501,8 +501,16 @@ function updateAnalysisChart() {
     }
     
     const ctx = document.getElementById('analysisChart');
+    
+    // Mobile-friendly labels - show shorter format on mobile
+    const isMobile = window.innerWidth < 768;
     const labels = dataArray.map((d, i) => {
         const date = new Date(d.created_at);
+        if (isMobile) {
+            // Format lebih pendek untuk mobile: 25/1 10:30
+            return date.toLocaleDateString('en-GB', {day: '2-digit', month: '2-digit'}) + 
+                   ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }
         return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
     });
     const chartData = filter === 'riskScore' ? riskScores : config.getData(dataArray);
@@ -517,19 +525,41 @@ function updateAnalysisChart() {
                 borderColor: config.color,
                 backgroundColor: config.color.replace('rgb', 'rgba').replace(')', ', 0.1)'),
                 tension: 0.4,
-                fill: true
+                fill: true,
+                borderWidth: isMobile ? 2 : 3,
+                pointRadius: isMobile ? 3 : 4,
+                pointHoverRadius: isMobile ? 5 : 6
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     display: true,
-                    position: 'top'
+                    position: isMobile ? 'bottom' : 'top',
+                    labels: {
+                        font: {
+                            size: isMobile ? 10 : 12
+                        },
+                        padding: isMobile ? 8 : 10,
+                        boxWidth: isMobile ? 30 : 40
+                    }
                 },
                 title: {
                     display: false
+                },
+                tooltip: {
+                    enabled: true,
+                    mode: 'index',
+                    intersect: false,
+                    titleFont: {
+                        size: isMobile ? 11 : 13
+                    },
+                    bodyFont: {
+                        size: isMobile ? 10 : 12
+                    },
+                    padding: isMobile ? 8 : 10
                 }
             },
             scales: {
@@ -538,23 +568,50 @@ function updateAnalysisChart() {
                     min: config.yAxisConfig.min,
                     max: config.yAxisConfig.max,
                     ticks: {
-                        stepSize: config.yAxisConfig.stepSize
+                        stepSize: config.yAxisConfig.stepSize,
+                        font: {
+                            size: isMobile ? 9 : 11
+                        }
                     },
                     title: {
+                        display: !isMobile,
+                        text: config.yAxisConfig.title,
+                        font: {
+                            size: isMobile ? 10 : 12
+                        }
+                    },
+                    grid: {
                         display: true,
-                        text: config.yAxisConfig.title
+                        drawBorder: true
                     }
                 },
                 x: {
                     title: {
-                        display: true,
-                        text: 'Timestamp'
+                        display: !isMobile,
+                        text: 'Timestamp',
+                        font: {
+                            size: isMobile ? 10 : 12
+                        }
                     },
                     ticks: {
-                        maxRotation: 45,
-                        minRotation: 45
+                        maxRotation: isMobile ? 90 : 45,
+                        minRotation: isMobile ? 90 : 45,
+                        font: {
+                            size: isMobile ? 8 : 10
+                        },
+                        autoSkip: true,
+                        autoSkipPadding: isMobile ? 15 : 10,
+                        maxTicksLimit: isMobile ? 6 : 10
+                    },
+                    grid: {
+                        display: false
                     }
                 }
+            },
+            interaction: {
+                mode: 'nearest',
+                axis: 'x',
+                intersect: false
             }
         }
     });
@@ -776,8 +833,16 @@ function updateRecommendationChart() {
     }
     
     const ctx = document.getElementById('recommendationChart');
+    
+    // Mobile-friendly labels - show shorter format on mobile
+    const isMobile = window.innerWidth < 768;
     const labels = dataArray.map((d, i) => {
         const date = new Date(d.created_at);
+        if (isMobile) {
+            // Format lebih pendek untuk mobile: 25/1 10:30
+            return date.toLocaleDateString('en-GB', {day: '2-digit', month: '2-digit'}) + 
+                   ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }
         return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
     });
     const chartData = filter === 'riskScore' ? riskScores : config.getData(dataArray);
@@ -807,19 +872,38 @@ function updateRecommendationChart() {
                 fill: true,
                 pointBackgroundColor: pointColors,
                 pointBorderColor: '#fff',
-                pointBorderWidth: 2,
-                pointRadius: 6
+                pointBorderWidth: isMobile ? 1.5 : 2,
+                pointRadius: isMobile ? 4 : 6,
+                pointHoverRadius: isMobile ? 6 : 8,
+                borderWidth: isMobile ? 2 : 3
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     display: true,
-                    position: 'top'
+                    position: isMobile ? 'bottom' : 'top',
+                    labels: {
+                        font: {
+                            size: isMobile ? 10 : 12
+                        },
+                        padding: isMobile ? 8 : 10,
+                        boxWidth: isMobile ? 30 : 40
+                    }
                 },
                 tooltip: {
+                    enabled: true,
+                    mode: 'index',
+                    intersect: false,
+                    titleFont: {
+                        size: isMobile ? 11 : 13
+                    },
+                    bodyFont: {
+                        size: isMobile ? 10 : 12
+                    },
+                    padding: isMobile ? 8 : 10,
                     callbacks: {
                         afterLabel: function(context) {
                             if (filter === 'riskScore') {
@@ -839,23 +923,50 @@ function updateRecommendationChart() {
                     min: config.yAxisConfig.min,
                     max: config.yAxisConfig.max,
                     ticks: {
-                        stepSize: config.yAxisConfig.stepSize
+                        stepSize: config.yAxisConfig.stepSize,
+                        font: {
+                            size: isMobile ? 9 : 11
+                        }
                     },
                     title: {
+                        display: !isMobile,
+                        text: config.yAxisConfig.title,
+                        font: {
+                            size: isMobile ? 10 : 12
+                        }
+                    },
+                    grid: {
                         display: true,
-                        text: config.yAxisConfig.title
+                        drawBorder: true
                     }
                 },
                 x: {
                     title: {
-                        display: true,
-                        text: 'Timestamp'
+                        display: !isMobile,
+                        text: 'Timestamp',
+                        font: {
+                            size: isMobile ? 10 : 12
+                        }
                     },
                     ticks: {
-                        maxRotation: 45,
-                        minRotation: 45
+                        maxRotation: isMobile ? 90 : 45,
+                        minRotation: isMobile ? 90 : 45,
+                        font: {
+                            size: isMobile ? 8 : 10
+                        },
+                        autoSkip: true,
+                        autoSkipPadding: isMobile ? 15 : 10,
+                        maxTicksLimit: isMobile ? 6 : 10
+                    },
+                    grid: {
+                        display: false
                     }
                 }
+            },
+            interaction: {
+                mode: 'nearest',
+                axis: 'x',
+                intersect: false
             }
         }
     });
