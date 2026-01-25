@@ -204,12 +204,25 @@
             <div id="analysisResults" style="display: none;">
                 <!-- Chart Container -->
                 <div class="card" style="margin-bottom: 20px;">
-                    <h2>📈 Risk Score Trend (Last 10 Data)</h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="margin: 0;">📈 Health Data Trend (Last 10 Data)</h2>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <label style="font-weight: 600; color: #374151;">Display:</label>
+                            <select id="analysisChartFilter" onchange="updateAnalysisChart()" style="padding: 8px 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; cursor: pointer;">
+                                <option value="riskScore">Risk Score</option>
+                                <option value="heartRate">Heart Rate (bpm)</option>
+                                <option value="bodyTemperature">Body Temperature (°C)</option>
+                                <option value="touchIntensity">Touch Intensity</option>
+                                <option value="movementPattern">Movement Pattern</option>
+                                <option value="soundActivity">Sound Activity</option>
+                            </select>
+                        </div>
+                    </div>
                     <canvas id="analysisChart" style="max-height: 400px;"></canvas>
                 </div>
 
                 <!-- Summary Statistics -->
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px;">
                     <div class="card" style="text-align: center;">
                         <h3 style="color: #6b7280; font-size: 14px; margin-bottom: 10px;">Total Records</h3>
                         <div style="font-size: 36px; font-weight: bold; color: #2563eb;" id="totalRecords">0</div>
@@ -219,12 +232,19 @@
                         <div style="font-size: 36px; font-weight: bold; color: #f59e0b;" id="avgRisk">0</div>
                     </div>
                     <div class="card" style="text-align: center;">
-                        <h3 style="color: #6b7280; font-size: 14px; margin-bottom: 10px;">Max Risk</h3>
-                        <div style="font-size: 36px; font-weight: bold; color: #ef4444;" id="maxRisk">0</div>
+                        <h3 style="color: #6b7280; font-size: 14px; margin-bottom: 10px;">🟢 Low Risk</h3>
+                        <div style="font-size: 36px; font-weight: bold; color: #10b981;" id="minRisk">0</div>
+                        <small style="color: #6b7280; font-size: 12px;">Score 0-2</small>
                     </div>
                     <div class="card" style="text-align: center;">
-                        <h3 style="color: #6b7280; font-size: 14px; margin-bottom: 10px;">Min Risk</h3>
-                        <div style="font-size: 36px; font-weight: bold; color: #10b981;" id="minRisk">0</div>
+                        <h3 style="color: #6b7280; font-size: 14px; margin-bottom: 10px;">🟡 Moderate Risk</h3>
+                        <div style="font-size: 36px; font-weight: bold; color: #f59e0b;" id="moderateRisk">0</div>
+                        <small style="color: #6b7280; font-size: 12px;">Score 3-5</small>
+                    </div>
+                    <div class="card" style="text-align: center;">
+                        <h3 style="color: #6b7280; font-size: 14px; margin-bottom: 10px;">🔴 High Risk</h3>
+                        <div style="font-size: 36px; font-weight: bold; color: #ef4444;" id="maxRisk">0</div>
+                        <small style="color: #6b7280; font-size: 12px;">Score 6-10</small>
                     </div>
                 </div>
 
@@ -340,7 +360,20 @@
             <div id="recommendationResults" style="display: none;">
                 <!-- Chart Container -->
                 <div class="card" style="margin-bottom: 20px;">
-                    <h2>📊 Risk Trend Analysis</h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="margin: 0;">📊 Health Data Trend Analysis</h2>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <label style="font-weight: 600; color: #374151;">Display:</label>
+                            <select id="recommendationChartFilter" onchange="updateRecommendationChart()" style="padding: 8px 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; cursor: pointer;">
+                                <option value="riskScore">Risk Score</option>
+                                <option value="heartRate">Heart Rate (bpm)</option>
+                                <option value="bodyTemperature">Body Temperature (°C)</option>
+                                <option value="touchIntensity">Touch Intensity</option>
+                                <option value="movementPattern">Movement Pattern</option>
+                                <option value="soundActivity">Sound Activity</option>
+                            </select>
+                        </div>
+                    </div>
                     <canvas id="recommendationChart" style="max-height: 400px;"></canvas>
                 </div>
 

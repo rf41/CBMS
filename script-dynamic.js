@@ -41,6 +41,10 @@ const API_BASE_URL = window.location.hostname === 'localhost'
 let analysisChartInstance = null;
 let recommendationChartInstance = null;
 
+// Store data for chart updates
+let currentAnalysisData = null;
+let currentRecommendationData = null;
+
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
     initializeEventListeners();
@@ -322,10 +326,20 @@ async function analyzeLatestData() {
         document.getElementById('analysisResults').style.display = 'block';
 
         // Update statistics
+        const lowRiskCount = riskScores.filter(score => score <= 2).length;
+        const moderateRiskCount = riskScores.filter(score => score > 2 && score <= 5).length;
+        const highRiskCount = riskScores.filter(score => score > 5).length;
+        
+        console.log('Risk Scores:', riskScores);
+        console.log('Low Risk Count (0-2):', lowRiskCount);
+        console.log('Moderate Risk Count (3-5):', moderateRiskCount);
+        console.log('High Risk Count (6-10):', highRiskCount);
+        
         document.getElementById('totalRecords').textContent = riskScores.length;
         document.getElementById('avgRisk').textContent = (riskScores.reduce((a, b) => a + b, 0) / riskScores.length).toFixed(1);
-        document.getElementById('maxRisk').textContent = Math.max(...riskScores);
-        document.getElementById('minRisk').textContent = Math.min(...riskScores);
+        document.getElementById('minRisk').textContent = lowRiskCount;
+        document.getElementById('moderateRisk').textContent = moderateRiskCount;
+        document.getElementById('maxRisk').textContent = highRiskCount;
 
         // Display latest data details
         const latestData = dataArray[dataArray.length - 1];
@@ -338,6 +352,12 @@ async function analyzeLatestData() {
         };
         
         displayLatestAnalysis(formattedLatestData, riskScores[riskScores.length - 1]);
+
+        // Store data for chart updates
+        currentAnalysisData = {
+            dataArray: dataArray,
+            riskScores: riskScores
+        };
 
         // Draw chart
         drawAnalysisChart(dataArray, riskScores);
@@ -406,25 +426,96 @@ function displayLatestAnalysis(data, riskScore) {
     }
 }
 
-function drawAnalysisChart(dataArray, riskScores) {
-    const ctx = document.getElementById('analysisChart');
+// Helper function: Convert categorical values to numeric
+function convertToNumeric(value, type) {
+    if (type === 'touch') {
+        if (value === 'low') return 1;
+        if (value === 'normal') return 2;
+        if (value === 'high') return 3;
+    } else if (type === 'movement') {
+        if (value === 'normal') return 1;
+        if (value === 'repetitive') return 2;
+        if (value === 'extreme') return 3;
+    } else if (type === 'sound') {
+        if (value === 'normal') return 1;
+        if (value === 'frequent') return 2;
+        if (value === 'intense') return 3;
+    }
+    return 0;
+}
+
+// Helper function: Get chart configuration based on filter
+function getChartConfig(filterValue, dataArray) {
+    const configs = {
+        riskScore: {
+            label: 'Risk Score',
+            getData: (dataArray, riskScores) => riskScores,
+            color: 'rgb(239, 68, 68)',
+            yAxisConfig: { max: 10, stepSize: 1, title: 'Risk Score' }
+        },
+        heartRate: {
+            label: 'Heart Rate (bpm)',
+            getData: (dataArray) => dataArray.map(d => d.heart_rate),
+            color: 'rgb(239, 68, 68)',
+            yAxisConfig: { min: 40, max: 200, stepSize: 20, title: 'Heart Rate (bpm)' }
+        },
+        bodyTemperature: {
+            label: 'Body Temperature (°C)',
+            getData: (dataArray) => dataArray.map(d => parseFloat(d.body_temperature)),
+            color: 'rgb(245, 158, 11)',
+            yAxisConfig: { min: 35, max: 40, stepSize: 0.5, title: 'Temperature (°C)' }
+        },
+        touchIntensity: {
+            label: 'Touch Intensity',
+            getData: (dataArray) => dataArray.map(d => convertToNumeric(d.touch_intensity, 'touch')),
+            color: 'rgb(139, 92, 246)',
+            yAxisConfig: { min: 0, max: 4, stepSize: 1, title: 'Touch (1=Low, 2=Normal, 3=High)' }
+        },
+        movementPattern: {
+            label: 'Movement Pattern',
+            getData: (dataArray) => dataArray.map(d => convertToNumeric(d.movement_pattern, 'movement')),
+            color: 'rgb(59, 130, 246)',
+            yAxisConfig: { min: 0, max: 4, stepSize: 1, title: 'Movement (1=Normal, 2=Repetitive, 3=Extreme)' }
+        },
+        soundActivity: {
+            label: 'Sound Activity',
+            getData: (dataArray) => dataArray.map(d => convertToNumeric(d.sound_activity, 'sound')),
+            color: 'rgb(16, 185, 129)',
+            yAxisConfig: { min: 0, max: 4, stepSize: 1, title: 'Sound (1=Normal, 2=Frequent, 3=Intense)' }
+        }
+    };
+    return configs[filterValue] || configs.riskScore;
+}
+
+// Update Analysis Chart based on filter
+function updateAnalysisChart() {
+    if (!currentAnalysisData) return;
     
-    // Destroy previous chart if exists
+    const filter = document.getElementById('analysisChartFilter').value;
+    const { dataArray, riskScores } = currentAnalysisData;
+    const config = getChartConfig(filter, dataArray);
+    
+    // Destroy previous chart
     if (analysisChartInstance) {
         analysisChartInstance.destroy();
     }
-
-    const labels = dataArray.map((d, i) => `#${d.id}`);
+    
+    const ctx = document.getElementById('analysisChart');
+    const labels = dataArray.map((d, i) => {
+        const date = new Date(d.created_at);
+        return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    });
+    const chartData = filter === 'riskScore' ? riskScores : config.getData(dataArray);
     
     analysisChartInstance = new Chart(ctx, {
         type: 'line',
         data: {
             labels: labels,
             datasets: [{
-                label: 'Risk Score',
-                data: riskScores,
-                borderColor: 'rgb(239, 68, 68)',
-                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                label: config.label,
+                data: chartData,
+                borderColor: config.color,
+                backgroundColor: config.color.replace('rgb', 'rgba').replace(')', ', 0.1)'),
                 tension: 0.4,
                 fill: true
             }]
@@ -443,25 +534,35 @@ function drawAnalysisChart(dataArray, riskScores) {
             },
             scales: {
                 y: {
-                    beginAtZero: true,
-                    max: 10,
+                    beginAtZero: config.yAxisConfig.min === undefined,
+                    min: config.yAxisConfig.min,
+                    max: config.yAxisConfig.max,
                     ticks: {
-                        stepSize: 1
+                        stepSize: config.yAxisConfig.stepSize
                     },
                     title: {
                         display: true,
-                        text: 'Risk Score'
+                        text: config.yAxisConfig.title
                     }
                 },
                 x: {
                     title: {
                         display: true,
-                        text: 'Data ID'
+                        text: 'Timestamp'
+                    },
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 45
                     }
                 }
             }
         }
     });
+}
+
+function drawAnalysisChart(dataArray, riskScores) {
+    // Initial draw with default filter (risk score)
+    updateAnalysisChart();
 }
 
 /**
@@ -506,6 +607,12 @@ async function analyzeRecommendations() {
         // Generate recommendation
         generateRecommendation(avgRisk, riskScores);
 
+        // Store data for chart updates
+        currentRecommendationData = {
+            dataArray: dataArray,
+            riskScores: riskScores
+        };
+
         // Draw chart
         drawRecommendationChart(dataArray, riskScores);
 
@@ -524,13 +631,19 @@ function generateRecommendation(avgRisk, riskScores) {
     
     title.textContent = 'Recommendations Based on Data Analysis';
     
+    // Calculate risk categories
+    const lowRiskCount = riskScores.filter(score => score <= 2).length;
+    const moderateRiskCount = riskScores.filter(score => score > 2 && score <= 5).length;
+    const highRiskCount = riskScores.filter(score => score > 5).length;
+    
     let recommendation = '<div style="line-height: 1.8;">';
     recommendation += `<p><strong>Analysis Summary:</strong></p>`;
     recommendation += `<ul style="margin-left: 20px;">`;
     recommendation += `<li>Total records analyzed: ${riskScores.length}</li>`;
     recommendation += `<li>Average risk score: ${avgRisk.toFixed(2)} / 10</li>`;
-    recommendation += `<li>Highest risk: ${Math.max(...riskScores)} / 10</li>`;
-    recommendation += `<li>Lowest risk: ${Math.min(...riskScores)} / 10</li>`;
+    recommendation += `<li>🟢 Low Risk (0-2): <strong>${lowRiskCount}</strong> data</li>`;
+    recommendation += `<li>🟡 Moderate Risk (3-5): <strong>${moderateRiskCount}</strong> data</li>`;
+    recommendation += `<li>🔴 High Risk (6-10): <strong>${highRiskCount}</strong> data</li>`;
     recommendation += `</ul><br>`;
     
     if (avgRisk <= 2) {
@@ -647,6 +760,110 @@ function drawRecommendationChart(dataArray, riskScores) {
             }
         }
     });
+}
+
+// Update Recommendation Chart based on filter
+function updateRecommendationChart() {
+    if (!currentRecommendationData) return;
+    
+    const filter = document.getElementById('recommendationChartFilter').value;
+    const { dataArray, riskScores } = currentRecommendationData;
+    const config = getChartConfig(filter, dataArray);
+    
+    // Destroy previous chart
+    if (recommendationChartInstance) {
+        recommendationChartInstance.destroy();
+    }
+    
+    const ctx = document.getElementById('recommendationChart');
+    const labels = dataArray.map((d, i) => {
+        const date = new Date(d.created_at);
+        return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    });
+    const chartData = filter === 'riskScore' ? riskScores : config.getData(dataArray);
+    
+    // Determine point colors based on data and filter
+    let pointColors;
+    if (filter === 'riskScore') {
+        pointColors = chartData.map(score => {
+            if (score <= 2) return 'rgb(16, 185, 129)';
+            if (score <= 5) return 'rgb(245, 158, 11)';
+            return 'rgb(239, 68, 68)';
+        });
+    } else {
+        pointColors = config.color;
+    }
+    
+    recommendationChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: config.label,
+                data: chartData,
+                borderColor: config.color,
+                backgroundColor: config.color.replace('rgb', 'rgba').replace(')', ', 0.1)'),
+                tension: 0.4,
+                fill: true,
+                pointBackgroundColor: pointColors,
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                },
+                tooltip: {
+                    callbacks: {
+                        afterLabel: function(context) {
+                            if (filter === 'riskScore') {
+                                const score = context.parsed.y;
+                                if (score <= 2) return 'Status: Low Risk';
+                                if (score <= 5) return 'Status: Needs Observation';
+                                return 'Status: Professional Consultation';
+                            }
+                            return '';
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: config.yAxisConfig.min === undefined,
+                    min: config.yAxisConfig.min,
+                    max: config.yAxisConfig.max,
+                    ticks: {
+                        stepSize: config.yAxisConfig.stepSize
+                    },
+                    title: {
+                        display: true,
+                        text: config.yAxisConfig.title
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Timestamp'
+                    },
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 45
+                    }
+                }
+            }
+        }
+    });
+}
+
+function drawRecommendationChart(dataArray, riskScores) {
+    // Initial draw with default filter (risk score)
+    updateRecommendationChart();
 }
 
 /**
