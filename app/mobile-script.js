@@ -15,15 +15,30 @@ function showLanding() {
     document.getElementById('loginScreen').classList.remove('active');
     document.getElementById('landingScreen').classList.add('active');
     currentPin = '';
+    updatePinDisplay();
 }
 
 // PIN Login
 function enterPin(num) {
     if (currentPin.length < 4) {
         currentPin += num;
+        updatePinDisplay();
         
         if (currentPin.length === 4) {
             setTimeout(checkPin, 300);
+        }
+    }
+}
+
+function updatePinDisplay() {
+    for (let i = 1; i <= 4; i++) {
+        const dot = document.getElementById('pinDot' + i);
+        if (i <= currentPin.length) {
+            dot.textContent = currentPin[i-1];
+            dot.classList.add('filled');
+        } else {
+            dot.textContent = '';
+            dot.classList.remove('filled');
         }
     }
 }
@@ -36,9 +51,11 @@ function checkPin() {
         loadDashboardStats();
         initCarousel();
         currentPin = '';
+        updatePinDisplay();
     } else {
         alert('Incorrect PIN. Default PIN is 1234');
         currentPin = '';
+        updatePinDisplay();
     }
 }
 
@@ -97,8 +114,10 @@ function goToSlide(index) {
 function updateCarousel() {
     const track = document.getElementById('carouselTrack');
     const dots = document.querySelectorAll('.carousel-dot');
+    const slideWidth = track.querySelector('.carousel-slide').offsetWidth;
+    const gap = 15; // gap between slides
     
-    track.style.transform = `translateX(-${currentSlide * 100}%)`;
+    track.style.transform = `translateX(-${currentSlide * (slideWidth + gap)}px)`;
     
     dots.forEach((dot, index) => {
         if (index === currentSlide) {
@@ -169,11 +188,12 @@ document.getElementById('saveDataForm').addEventListener('submit', async (e) => 
     e.preventDefault();
     
     const data = {
-        heart_rate: parseInt(document.getElementById('heartRateInput').value),
-        body_temperature: parseFloat(document.getElementById('temperatureInput').value),
-        touch_intensity: document.getElementById('touchInput').value,
-        movement_pattern: document.getElementById('movementInput').value,
-        sound_activity: document.getElementById('soundInput').value
+        heartRate: parseInt(document.getElementById('heartRateInput').value),
+        bodyTemperature: parseFloat(document.getElementById('temperatureInput').value),
+        touchIntensity: document.getElementById('touchInput').value,
+        movementPattern: document.getElementById('movementInput').value,
+        soundActivity: document.getElementById('soundInput').value,
+        deviceId: "MOBILE_APP"
     };
     
     try {

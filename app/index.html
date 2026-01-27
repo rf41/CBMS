@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TeddyTalk - CBMS</title>
-    <link rel="icon" type="image/jpeg" href="../assets/TeddyTalk.jpeg">
-    <link rel="stylesheet" href="mobile-style.css">
+    <link rel="icon" type="image/jpeg" href="/assets/TeddyTalk.jpeg">
+    <link rel="stylesheet" href="/app/mobile-style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
@@ -15,7 +15,7 @@
         <div class="landing-container">
             <div class="landing-content">
                 <div class="landing-logo">
-                    <img src="../assets/TeddyTalk.jpeg" class="bear-logo">
+                    <img src="/assets/TeddyTalk.jpeg" class="bear-logo">
                     <div class="chat-bubbles">
                         <i class="fas fa-comment"></i>
                         <i class="fas fa-comment"></i>
@@ -39,7 +39,7 @@
         <div class="login-container">
             <div class="login-branding">
                 <div class="login-logo-wrapper">
-                    <img src="../assets/TeddyTalk.jpeg" class="login-logo">
+                    <img src="/assets/TeddyTalk.jpeg" class="login-logo">
                     <div class="chat-bubbles-login">
                         <i class="fas fa-comment"></i>
                         <i class="fas fa-comment"></i>
@@ -49,6 +49,15 @@
                 <p class="login-subtitle">CHILD BEHAVIOR MONITORING SYSTEM</p>
             </div>
             <div class="pin-container">
+                <div class="pin-display-container">
+                    <p class="pin-label">Masukkan PIN</p>
+                    <div class="pin-display" id="pinDisplay">
+                        <span class="pin-dot" id="pinDot1"></span>
+                        <span class="pin-dot" id="pinDot2"></span>
+                        <span class="pin-dot" id="pinDot3"></span>
+                        <span class="pin-dot" id="pinDot4"></span>
+                    </div>
+                </div>
                 <div class="pin-keypad">
                     <button class="pin-key" onclick="enterPin('1')">1</button>
                     <button class="pin-key" onclick="enterPin('2')">2</button>
@@ -75,8 +84,8 @@
                 <span>Dashboard</span>
             </button>
             <button class="nav-item" data-page="testapi" onclick="showPage('testapi')">
-                <i class="fas fa-flask"></i>
-                <span>Test API</span>
+                <i class="fas fa-paw"></i>
+                <span>Your Bear</span>
             </button>
             <button class="nav-item" data-page="analysis" onclick="showPage('analysis')">
                 <i class="fas fa-chart-line"></i>
@@ -116,18 +125,17 @@
 
                 <!-- How it Works Carousel -->
                 <div class="how-it-works">
-                    <h2 class="works-title">How it Works</h2>
                     <div class="carousel-container">
                         <div class="carousel-track" id="carouselTrack">
                             <!-- Slide 1: Test API -->
                             <div class="carousel-slide">
                                 <div class="works-card">
                                     <div class="works-icon">
-                                        <i class="fas fa-file-alt"></i>
+                                        <i class="fas fa-paw"></i>
                                     </div>
                                     <div class="works-content">
-                                        <h3>Save new data and test database operations</h3>
-                                        <span class="works-label">Test API</span>
+                                        <h3>Test data sent from Your Bear</h3>
+                                        <span class="works-label">Your Bear</span>
                                     </div>
                                 </div>
                             </div>
@@ -139,7 +147,7 @@
                                         <i class="fas fa-chart-bar"></i>
                                     </div>
                                     <div class="works-content">
-                                        <h3>Our system analyzes latest 10 records from database</h3>
+                                        <h3>Our system analyzes latest records from database</h3>
                                         <span class="works-label">Analysis</span>
                                     </div>
                                 </div>
@@ -184,9 +192,9 @@
                 <div class="categories-grid">
                     <button class="category-item" onclick="showPage('testapi')">
                         <div class="category-icon">
-                            <i class="fas fa-file-alt"></i>
+                            <i class="fas fa-paw"></i>
                         </div>
-                        <span>Test API</span>
+                        <span>Your Bear</span>
                     </button>
                     <button class="category-item" onclick="showPage('analysis')">
                         <div class="category-icon">
@@ -225,6 +233,16 @@
                         <h4>Comprehensive Report</h4>
                         <p>View detailed sensor metrics and personalized recommendations based on the analysis.</p>
                     </div>
+                    <div class="featured-card">
+                        <div class="featured-icon">📊</div>
+                        <h4>Smart Analysis</h4>
+                        <p>Advanced sensor data analysis to identify behavioral patterns at risk indicators in real-time.</p>
+                    </div>
+                    <div class="featured-card">
+                        <div class="featured-icon">🔒</div>
+                        <h4>Privacy First</h4>
+                        <p>All data processing happens locally on your device. No data is stored or transmitted to servers.</p>
+                    </div>
                 </div>
 
                 <!-- Disclaimer Modal -->
@@ -249,14 +267,14 @@
                     <button class="btn-back-custom" onclick="showPage('dashboard')"><i class="fas fa-arrow-left"></i></button>
                     <div class="header-content-custom">
                         <div class="header-icon-large">
-                            <i class="fas fa-file-alt"></i>
+                            <i class="fas fa-paw"></i>
                         </div>
                         <div class="header-text">
-                            <h1>Test API</h1>
-                            <p>Test Database Operations</p>
+                            <h1>Your Bear</h1>
+                            <p>Simulasi pengiriman data dari boneka</p>
                         </div>
                     </div>
-                    <img src="../assets/TeddyTalk.jpeg" class="header-logo-small">
+                    <img src="/assets/TeddyTalk.jpeg" class="header-logo-small">
                 </div>
 
                 <!-- Save Data Form -->
@@ -368,7 +386,7 @@
                             <p>Sensor Data Evaluation from Database</p>
                         </div>
                     </div>
-                    <img src="../assets/TeddyTalk.jpeg" class="header-logo-small">
+                    <img src="/assets/TeddyTalk.jpeg" class="header-logo-small">
                 </div>
 
                 <!-- Chart Section -->
@@ -391,11 +409,9 @@
                         </div>
                         <canvas id="analysisChart" style="display: none;"></canvas>
                     </div>
-                </div>
-
-                <!-- See All Link -->
-                <div class="see-all-right">
-                    <button class="see-all-link" onclick="analyzeLatestData()">Analyze Data</button>
+                    <button class="btn-analyze-data" onclick="analyzeLatestData()">
+                        <i class="fas fa-chart-line"></i> Analyze Data
+                    </button>
                 </div>
 
                 <!-- Results Container -->
@@ -490,10 +506,10 @@
                         </div>
                         <div class="header-text">
                             <h1>Recommendation</h1>
-                            <p>Personalized Guidance from Database Analysis</p>
+                            <p>Health Analysis and Guidance</p>
                         </div>
                     </div>
-                    <img src="../assets/TeddyTalk.jpeg" class="header-logo-small">
+                    <img src="/assets/TeddyTalk.jpeg" class="header-logo-small">
                 </div>
 
                 <!-- Generate Button -->
@@ -537,6 +553,6 @@
         </div>
     </div>
 
-    <script src="mobile-script.js"></script>
+    <script src="/app/mobile-script.js"></script>
 </body>
 </html>
