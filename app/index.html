@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TeddyTalk - CBMS</title>
+    <link rel="icon" type="image/jpeg" href="../assets/TeddyTalk.jpeg">
+    <link rel="stylesheet" href="mobile-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Landing Page -->
+    <div id="landingScreen" class="screen active">
+        <div class="landing-container">
+            <div class="landing-content">
+                <div class="landing-logo">
+                    <img src="../assets/TeddyTalk.jpeg" class="bear-logo">
+                    <div class="chat-bubbles">
+                        <i class="fas fa-comment"></i>
+                        <i class="fas fa-comment"></i>
+                    </div>
+                </div>
+                <h1 class="brand-name">SIBEAR81</h1>
+                <p class="brand-subtitle">CHILD BEHAVIOR MONITORING SYSTEM</p>
+            </div>
+            <div class="landing-footer">
+                <p class="footer-text">PILIH UNTUK LANJUT</p>
+                <div class="landing-buttons">
+                    <button class="btn-landing" onclick="showPinLogin()">Masuk</button>
+                    <button class="btn-landing" onclick="showPinLogin()">Daftar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PIN Login Screen -->
+    <div id="loginScreen" class="screen">
+        <div class="login-container">
+            <div class="login-branding">
+                <div class="login-logo-wrapper">
+                    <img src="../assets/TeddyTalk.jpeg" class="login-logo">
+                    <div class="chat-bubbles-login">
+                        <i class="fas fa-comment"></i>
+                        <i class="fas fa-comment"></i>
+                    </div>
+                </div>
+                <h1 class="login-brand">SIBEAR81</h1>
+                <p class="login-subtitle">CHILD BEHAVIOR MONITORING SYSTEM</p>
+            </div>
+            <div class="pin-container">
+                <div class="pin-keypad">
+                    <button class="pin-key" onclick="enterPin('1')">1</button>
+                    <button class="pin-key" onclick="enterPin('2')">2</button>
+                    <button class="pin-key" onclick="enterPin('3')">3</button>
+                    <button class="pin-key" onclick="enterPin('4')">4</button>
+                    <button class="pin-key" onclick="enterPin('5')">5</button>
+                    <button class="pin-key" onclick="enterPin('6')">6</button>
+                    <button class="pin-key" onclick="enterPin('7')">7</button>
+                    <button class="pin-key" onclick="enterPin('8')">8</button>
+                    <button class="pin-key" onclick="enterPin('9')">9</button>
+                    <button class="pin-key" onclick="enterPin('0')">0</button>
+                </div>
+                <button class="btn-cancel" onclick="showLanding()">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App Screen -->
+    <div id="mainScreen" class="screen">
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-page="dashboard" onclick="showPage('dashboard')">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </button>
+            <button class="nav-item" data-page="testapi" onclick="showPage('testapi')">
+                <i class="fas fa-flask"></i>
+                <span>Test API</span>
+            </button>
+            <button class="nav-item" data-page="analysis" onclick="showPage('analysis')">
+                <i class="fas fa-chart-line"></i>
+                <span>Analysis</span>
+            </button>
+            <button class="nav-item" data-page="recommendation" onclick="showPage('recommendation')">
+                <i class="fas fa-lightbulb"></i>
+                <span>Recommend</span>
+            </button>
+        </nav>
+
+        <!-- Pages Container -->
+        <div class="pages-container">
+            <!-- Dashboard Page -->
+            <div id="dashboard" class="page active">
+                <div class="dashboard-header">
+                    <div class="user-profile">
+                        <img src="../assets/TeddyTalk.jpeg" class="profile-pic">
+                        <span class="user-name">FATHIYA EL MYZA</span>
+                    </div>
+                    <div class="header-actions">
+                        <button class="header-icon"><i class="fas fa-bell"></i></button>
+                        <img src="../assets/TeddyTalk.jpeg" class="header-logo">
+                    </div>
+                </div>
+
+                <div class="privacy-banner">
+                    <i class="fas fa-lock"></i>
+                    <span>All data processing happens locally on your device.</span>
+                    <i class="fas fa-sliders-h"></i>
+                </div>
+
+                <div class="section-title">
+                    <h3>Disclaimer</h3>
+                    <button class="see-all" onclick="showDisclaimer()">See all <i class="fas fa-chevron-right"></i></button>
+                </div>
+
+                <!-- How it Works Carousel -->
+                <div class="how-it-works">
+                    <h2 class="works-title">How it Works</h2>
+                    <div class="carousel-container">
+                        <div class="carousel-track" id="carouselTrack">
+                            <!-- Slide 1: Test API -->
+                            <div class="carousel-slide">
+                                <div class="works-card">
+                                    <div class="works-icon">
+                                        <i class="fas fa-file-alt"></i>
+                                    </div>
+                                    <div class="works-content">
+                                        <h3>Save new data and test database operations</h3>
+                                        <span class="works-label">Test API</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Slide 2: Analysis -->
+                            <div class="carousel-slide">
+                                <div class="works-card">
+                                    <div class="works-icon">
+                                        <i class="fas fa-chart-bar"></i>
+                                    </div>
+                                    <div class="works-content">
+                                        <h3>Our system analyzes latest 10 records from database</h3>
+                                        <span class="works-label">Analysis</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Slide 3: Risk Assessment -->
+                            <div class="carousel-slide">
+                                <div class="works-card">
+                                    <div class="works-icon">
+                                        <i class="fas fa-search"></i>
+                                    </div>
+                                    <div class="works-content">
+                                        <h3>View trends with charts and statistics</h3>
+                                        <span class="works-label">Risk Assessment</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Slide 4: Recommendation -->
+                            <div class="carousel-slide">
+                                <div class="works-card">
+                                    <div class="works-icon">
+                                        <i class="fas fa-hand-holding-heart"></i>
+                                    </div>
+                                    <div class="works-content">
+                                        <h3>Receive tailored guidance based on data analysis</h3>
+                                        <span class="works-label">Recommendation</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-dots" id="carouselDots"></div>
+                    </div>
+                </div>
+
+                <!-- Categories -->
+                <div class="section-title">
+                    <h3>Categories</h3>
+                    <button class="see-all">See all <i class="fas fa-chevron-right"></i></button>
+                </div>
+
+                <div class="categories-grid">
+                    <button class="category-item" onclick="showPage('testapi')">
+                        <div class="category-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <span>Test API</span>
+                    </button>
+                    <button class="category-item" onclick="showPage('analysis')">
+                        <div class="category-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <span>Analysis</span>
+                    </button>
+                    <button class="category-item" onclick="showPage('analysis')">
+                        <div class="category-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <span>Risk Assessment</span>
+                    </button>
+                    <button class="category-item" onclick="showPage('recommendation')">
+                        <div class="category-icon">
+                            <i class="fas fa-hand-holding-heart"></i>
+                        </div>
+                        <span>Recommendation</span>
+                    </button>
+                </div>
+
+                <!-- Featured Product -->
+                <div class="section-title">
+                    <h3>Featured Product</h3>
+                    <button class="see-all">See all <i class="fas fa-chevron-right"></i></button>
+                </div>
+
+                <div class="featured-grid">
+                    <div class="featured-card">
+                        <div class="featured-icon">⚡</div>
+                        <h4>Instant Result</h4>
+                        <p>Get immediate risk assessment with detailed explanations and actionable recommendations.</p>
+                    </div>
+                    <div class="featured-card">
+                        <div class="featured-icon">📋</div>
+                        <h4>Comprehensive Report</h4>
+                        <p>View detailed sensor metrics and personalized recommendations based on the analysis.</p>
+                    </div>
+                </div>
+
+                <!-- Disclaimer Modal -->
+                <div id="disclaimerModal" class="modal">
+                    <div class="modal-content">
+                        <button class="modal-close" onclick="hideDisclaimer()"><i class="fas fa-times"></i></button>
+                        <div class="disclaimer-full">
+                            <div class="disclaimer-header">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <h2>Important Disclaimer</h2>
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <p>This is an educational prototype and NOT a medical diagnosis tool. This system analyzes behavioral patterns from sensor data but does NOT diagnose autism or any medical condition. Always consult qualified healthcare professionals for proper medical assessment and diagnosis.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Test API Page -->
+            <div id="testapi" class="page">
+                <div class="page-header-custom">
+                    <button class="btn-back-custom" onclick="showPage('dashboard')"><i class="fas fa-arrow-left"></i></button>
+                    <div class="header-content-custom">
+                        <div class="header-icon-large">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div class="header-text">
+                            <h1>Test API</h1>
+                            <p>Test Database Operations</p>
+                        </div>
+                    </div>
+                    <img src="../assets/TeddyTalk.jpeg" class="header-logo-small">
+                </div>
+
+                <!-- Save Data Form -->
+                <div class="api-card">
+                    <div class="api-card-header">
+                        <div class="api-icon">
+                            <i class="fas fa-save"></i>
+                        </div>
+                        <div class="api-header-text">
+                            <h3>Save New Data</h3>
+                            <p>Add new sensor data to database</p>
+                        </div>
+                    </div>
+
+                    <form id="saveDataForm">
+                        <div class="form-group-api">
+                            <label>Heart Rate (bpm)</label>
+                            <input type="number" id="heartRateInput" min="40" max="200" value="85" required>
+                        </div>
+                        <div class="form-group-api">
+                            <label>Temperature (°C)</label>
+                            <input type="number" id="temperatureInput" step="0.1" min="30" max="45" value="37.0" required>
+                        </div>
+                        <div class="form-group-api">
+                            <label>Touch Intensity</label>
+                            <select id="touchInput" required>
+                                <option value="low">Low</option>
+                                <option value="normal">Normal</option>
+                                <option value="high" selected>High</option>
+                            </select>
+                        </div>
+                        <div class="form-group-api">
+                            <label>Movement</label>
+                            <select id="movementInput" required>
+                                <option value="normal">Normal</option>
+                                <option value="repetitive">Repetitive</option>
+                                <option value="extreme" selected>Extreme</option>
+                            </select>
+                        </div>
+                        <div class="form-group-api">
+                            <label>Sound</label>
+                            <select id="soundInput" required>
+                                <option value="normal" selected>Normal</option>
+                                <option value="frequent">Frequent</option>
+                                <option value="intense">Intense</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-api-primary">Save Data to Database</button>
+                    </form>
+                    <div id="saveResult" class="result-message"></div>
+                </div>
+
+                <!-- Get Operations -->
+                <div class="api-operations-grid">
+                    <!-- Get Latest Data -->
+                    <div class="api-card-small">
+                        <div class="api-card-header-small">
+                            <div class="api-icon-small">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="api-header-text-small">
+                                <h4>Get Last Data</h4>
+                                <p>Fetch most recent records from database</p>
+                            </div>
+                        </div>
+                        <div class="form-group-api">
+                            <label>Number of records</label>
+                            <input type="number" id="limitInput" min="1" max="100" value="10">
+                        </div>
+                        <button class="btn-api-secondary" onclick="testGetLatestData()">Get Lates Data</button>
+                    </div>
+
+                    <!-- Get Data by ID -->
+                    <div class="api-card-small">
+                        <div class="api-card-header-small">
+                            <div class="api-icon-small">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <div class="api-header-text-small">
+                                <h4>Get Data by ID</h4>
+                                <p>Fetch specific record by ID</p>
+                            </div>
+                        </div>
+                        <div class="form-group-api">
+                            <label>Data ID</label>
+                            <input type="number" id="dataIdInput" min="1" value="10">
+                        </div>
+                        <button class="btn-api-secondary" onclick="testGetDataById()">Get Data by ID</button>
+                    </div>
+                </div>
+
+                <!-- API Response -->
+                <div class="api-card" id="apiResponseCard" style="display: none;">
+                    <h4>API Response</h4>
+                    <pre id="apiResponse"></pre>
+                </div>
+            </div>
+
+            <!-- Analysis Page -->
+            <div id="analysis" class="page">
+                <div class="page-header-custom">
+                    <button class="btn-back-custom" onclick="showPage('dashboard')"><i class="fas fa-arrow-left"></i></button>
+                    <div class="header-content-custom">
+                        <div class="header-icon-large">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="header-text">
+                            <h1>Analysis</h1>
+                            <p>Sensor Data Evaluation from Database</p>
+                        </div>
+                    </div>
+                    <img src="../assets/TeddyTalk.jpeg" class="header-logo-small">
+                </div>
+
+                <!-- Chart Section -->
+                <div class="analysis-chart-section">
+                    <h3 class="section-title-analysis">Health Data Trend (Last 10 Data)</h3>
+                    <div class="chart-display-selector">
+                        <span>Display :</span>
+                        <select id="analysisChartFilter" onchange="updateAnalysisChart()">
+                            <option value="riskScore">Risk Score</option>
+                            <option value="heartRate">Heart Rate</option>
+                            <option value="bodyTemperature">Temperature</option>
+                            <option value="touchIntensity">Touch</option>
+                            <option value="movementPattern">Movement</option>
+                            <option value="soundActivity">Sound</option>
+                        </select>
+                    </div>
+                    <div class="chart-box">
+                        <div class="chart-placeholder" id="chartPlaceholder">
+                            <span class="chart-text">Grafik</span>
+                        </div>
+                        <canvas id="analysisChart" style="display: none;"></canvas>
+                    </div>
+                </div>
+
+                <!-- See All Link -->
+                <div class="see-all-right">
+                    <button class="see-all-link" onclick="analyzeLatestData()">Analyze Data</button>
+                </div>
+
+                <!-- Results Container -->
+                <div id="analysisResults" style="display: none;">
+                    <!-- Stats Grid -->
+                    <div class="stats-cards-analysis">
+                        <div class="stat-card-analysis">
+                            <h4>Total Records</h4>
+                            <div class="stat-value-large" id="totalRecords">0</div>
+                        </div>
+                        <div class="stat-card-analysis">
+                            <h4>Average Risk</h4>
+                            <div class="stat-value-large" id="avgRisk">0</div>
+                        </div>
+                        <div class="stat-card-analysis">
+                            <h4>Low Risk</h4>
+                            <div class="stat-value-large" id="minRisk">0</div>
+                        </div>
+                        <div class="stat-card-analysis">
+                            <h4>Moderate Risk</h4>
+                            <div class="stat-value-large" id="moderateRisk">0</div>
+                        </div>
+                        <div class="stat-card-analysis">
+                            <h4>High Risk</h4>
+                            <div class="stat-value-large" id="maxRisk">0</div>
+                        </div>
+                    </div>
+
+                    <!-- Latest Data Assessment -->
+                    <div class="assessment-section">
+                        <h3 class="assessment-title">Latest Data Assessment</h3>
+                        <div class="risk-badge" id="riskBadge">LOW RISK</div>
+                        <div class="progress-section">
+                            <p class="progress-label">Risk Score Progress</p>
+                            <div class="progress-bar-analysis">
+                                <div class="progress-fill-analysis" id="progressFill"></div>
+                            </div>
+                            <div class="progress-scale">
+                                <span>0</span>
+                                <span>10</span>
+                            </div>
+                        </div>
+                        <div class="assessment-box">
+                            <p class="assessment-label">Assessment:</p>
+                            <p class="assessment-text" id="riskExplanation">The sensor data indicates normal behavioral patterns. All parameters are within expected ranges.</p>
+                        </div>
+                    </div>
+
+                    <!-- Click for More Button -->
+                    <button class="click-more-btn" onclick="toggleSensorDetails()">CLICK FOR MORE</button>
+
+                    <!-- Sensor Details (Hidden by default) -->
+                    <div id="sensorDetails" style="display: none;">
+                        <div class="sensor-cards-grid">
+                            <div class="sensor-card-analysis">
+                                <div class="sensor-icon-analysis">❤️</div>
+                                <h4>Heart Rate</h4>
+                                <div class="sensor-value-analysis" id="heartRateValue">--</div>
+                            </div>
+                            <div class="sensor-card-analysis">
+                                <div class="sensor-icon-analysis">🌡️</div>
+                                <h4>Body Temperature</h4>
+                                <div class="sensor-value-analysis" id="temperatureValue">--</div>
+                            </div>
+                            <div class="sensor-card-analysis">
+                                <div class="sensor-icon-analysis">✋</div>
+                                <h4>Touch Intensity</h4>
+                                <div class="sensor-value-analysis" id="touchValue">--</div>
+                            </div>
+                            <div class="sensor-card-analysis">
+                                <div class="sensor-icon-analysis">🚶</div>
+                                <h4>Movement Pattern</h4>
+                                <div class="sensor-value-analysis" id="movementValue">--</div>
+                            </div>
+                            <div class="sensor-card-analysis">
+                                <div class="sensor-icon-analysis">🔊</div>
+                                <h4>Sound Activity</h4>
+                                <div class="sensor-value-analysis" id="soundValue">--</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recommendation Page -->
+            <div id="recommendation" class="page">
+                <div class="page-header-custom">
+                    <button class="btn-back-custom" onclick="showPage('dashboard')"><i class="fas fa-arrow-left"></i></button>
+                    <div class="header-content-custom">
+                        <div class="header-icon-large">
+                            <i class="fas fa-hand-holding-heart"></i>
+                        </div>
+                        <div class="header-text">
+                            <h1>Recommendation</h1>
+                            <p>Personalized Guidance from Database Analysis</p>
+                        </div>
+                    </div>
+                    <img src="../assets/TeddyTalk.jpeg" class="header-logo-small">
+                </div>
+
+                <!-- Generate Button -->
+                <div style="padding: 20px; text-align: center;">
+                    <button class="btn-api-primary" onclick="analyzeRecommendations()">
+                        <i class="fas fa-lightbulb"></i> Generate Recommendations
+                    </button>
+                </div>
+
+                <!-- Results -->
+                <div id="recommendationResults" style="display: none;">
+                    <!-- Analysis Summary -->
+                    <div class="summary-section">
+                        <h3 class="summary-title">Analysis Summary:</h3>
+                        <ul class="summary-list">
+                            <li><strong>Total records analyzed:</strong> <span id="recTotalRecords">0</span></li>
+                            <li><strong>Average risk score:</strong> <span id="recAvgRisk">0</span> / 10</li>
+                            <li><span class="risk-dot green">🟢</span> <strong>Low Risk (0-2):</strong> <span id="recLowRisk">0</span> data</li>
+                            <li><span class="risk-dot yellow">🟡</span> <strong>Moderate Risk (3-5):</strong> <span id="recModerateRisk">0</span> data</li>
+                            <li><span class="risk-dot red">🔴</span> <strong>High Risk (6-10):</strong> <span id="recHighRisk">0</span> data</li>
+                        </ul>
+                    </div>
+
+                    <!-- Overall Assessment -->
+                    <div class="assessment-card">
+                        <h3 class="assessment-card-title" id="overallAssessmentTitle">✓ Overall Assessment: Low Risk</h3>
+                        <div class="assessment-content" id="overallAssessmentContent">
+                            <!-- Content will be filled by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Next Steps -->
+                    <div class="next-steps-section">
+                        <h3 class="next-steps-title">Next Steps</h3>
+                        <div class="next-steps-content" id="nextStepsContent">
+                            <!-- Content will be filled by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="mobile-script.js"></script>
+</body>
+</html>
