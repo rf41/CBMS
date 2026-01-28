@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TeddyTalk - CBMS</title>
-    <link rel="icon" type="image/jpeg" href="/assets/TeddyTalk.jpeg">
-    <link rel="stylesheet" href="/app/mobile-style.css">
+    <link rel="icon" type="image/jpeg" href="./assets/TeddyTalk.jpeg">
+    <link rel="stylesheet" href="./mobile-style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="./config.js"></script>
 </head>
 <body>
     <!-- Landing Page -->
@@ -15,7 +16,7 @@
         <div class="landing-container">
             <div class="landing-content">
                 <div class="landing-logo">
-                    <img src="/assets/TeddyTalk.jpeg" class="bear-logo">
+                    <img src="./assets/TeddyTalk.jpeg" class="bear-logo">
                     <div class="chat-bubbles">
                         <i class="fas fa-comment"></i>
                         <i class="fas fa-comment"></i>
@@ -39,7 +40,7 @@
         <div class="login-container">
             <div class="login-branding">
                 <div class="login-logo-wrapper">
-                    <img src="/assets/TeddyTalk.jpeg" class="login-logo">
+                    <img src="./assets/TeddyTalk.jpeg" class="login-logo">
                     <div class="chat-bubbles-login">
                         <i class="fas fa-comment"></i>
                         <i class="fas fa-comment"></i>
@@ -68,7 +69,9 @@
                     <button class="pin-key" onclick="enterPin('7')">7</button>
                     <button class="pin-key" onclick="enterPin('8')">8</button>
                     <button class="pin-key" onclick="enterPin('9')">9</button>
+                    <button class="pin-key pin-key-empty"></button>
                     <button class="pin-key" onclick="enterPin('0')">0</button>
+                    <button class="pin-key pin-key-delete" onclick="deletePin()"><i class="fas fa-backspace"></i></button>
                 </div>
                 <button class="btn-cancel" onclick="showLanding()">CANCEL</button>
             </div>
@@ -103,12 +106,12 @@
             <div id="dashboard" class="page active">
                 <div class="dashboard-header">
                     <div class="user-profile">
-                        <img src="../assets/TeddyTalk.jpeg" class="profile-pic">
+                        <img src="./assets/TeddyTalk.jpeg" class="profile-pic">
                         <span class="user-name">FATHIYA EL MYZA</span>
                     </div>
                     <div class="header-actions">
                         <button class="header-icon"><i class="fas fa-bell"></i></button>
-                        <img src="../assets/TeddyTalk.jpeg" class="header-logo">
+                        <img src="./assets/TeddyTalk.jpeg" class="header-logo">
                     </div>
                 </div>
 
@@ -271,10 +274,10 @@
                         </div>
                         <div class="header-text">
                             <h1>Your Bear</h1>
-                            <p>Simulasi pengiriman data dari boneka</p>
+                            <p>Data simulation</p>
                         </div>
                     </div>
-                    <img src="/assets/TeddyTalk.jpeg" class="header-logo-small">
+                    <img src="./assets/TeddyTalk.jpeg" class="header-logo-small">
                 </div>
 
                 <!-- Save Data Form -->
@@ -383,10 +386,10 @@
                         </div>
                         <div class="header-text">
                             <h1>Analysis</h1>
-                            <p>Sensor Data Evaluation from Database</p>
+                            <p>Sensor Data Evaluation</p>
                         </div>
                     </div>
-                    <img src="/assets/TeddyTalk.jpeg" class="header-logo-small">
+                    <img src="./assets/TeddyTalk.jpeg" class="header-logo-small">
                 </div>
 
                 <!-- Chart Section -->
@@ -509,7 +512,7 @@
                             <p>Health Analysis and Guidance</p>
                         </div>
                     </div>
-                    <img src="/assets/TeddyTalk.jpeg" class="header-logo-small">
+                    <img src="./assets/TeddyTalk.jpeg" class="header-logo-small">
                 </div>
 
                 <!-- Generate Button -->
@@ -553,6 +556,6 @@
         </div>
     </div>
 
-    <script src="/app/mobile-script.js"></script>
+    <script src="./mobile-script.js"></script>
 </body>
 </html>

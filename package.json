@@ -5,12 +5,20 @@
   "main": "index.html",
   "scripts": {
     "dev": "vercel dev",
-    "deploy": "vercel --prod"
+    "deploy": "vercel --prod",
+    "android:sync": "npx cap sync android",
+    "android:open": "npx cap open android",
+    "android:build": "npx cap sync android && cd android && .\\gradlew assembleDebug",
+    "android:release": "npx cap sync android && cd android && .\\gradlew assembleRelease",
+    "android:icon": "powershell -ExecutionPolicy Bypass -File fix-icon.ps1"
   },
   "dependencies": {
+    "@capacitor/android": "^8.0.1",
     "@vercel/postgres": "^0.5.1"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.0.1",
+    "@capacitor/core": "^8.0.1",
     "vercel": "^33.0.0"
   },
   "keywords": [

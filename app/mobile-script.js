@@ -5,6 +5,106 @@ let analysisData = null;
 let analysisChart = null;
 let recommendationChart = null;
 
+// API Base URL - Ambil dari config.js
+const API_BASE_URL = (typeof CONFIG !== 'undefined' && CONFIG.API_URL) 
+    ? CONFIG.API_URL 
+    : '';  // Fallback ke relative path jika tidak ada config
+
+// Debug: Log API URL saat app start
+console.log('=== CBMS App Started ===');
+console.log('API_BASE_URL:', API_BASE_URL);
+console.log('CONFIG:', typeof CONFIG !== 'undefined' ? CONFIG : 'CONFIG not loaded');
+console.log('BUILD_TIME:', typeof CONFIG !== 'undefined' && CONFIG.BUILD_TIME ? CONFIG.BUILD_TIME : 'unknown');
+
+// Create debug console for mobile (long press on logo to show)
+let debugLogs = [];
+const originalConsoleLog = console.log;
+const originalConsoleError = console.error;
+
+console.log = function(...args) {
+    debugLogs.push('[LOG] ' + args.join(' '));
+    if (debugLogs.length > 100) debugLogs.shift();
+    originalConsoleLog.apply(console, args);
+};
+
+console.error = function(...args) {
+    debugLogs.push('[ERROR] ' + args.join(' '));
+    if (debugLogs.length > 100) debugLogs.shift();
+    originalConsoleError.apply(console, args);
+};
+
+// Function to show debug logs
+function showDebugLogs() {
+    const modal = document.createElement('div');
+    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:10000;padding:20px;overflow:auto;';
+    modal.innerHTML = `
+        <div style="background:white;padding:20px;border-radius:10px;max-height:90vh;overflow:auto;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
+                <h3 style="margin:0;">Debug Console</h3>
+                <button onclick="this.parentElement.parentElement.parentElement.remove()" style="padding:10px 20px;border:none;background:#ef4444;color:white;border-radius:5px;font-size:16px;">Close</button>
+            </div>
+            <div style="background:#1a1a1a;color:#00ff00;padding:15px;border-radius:5px;font-family:monospace;font-size:12px;white-space:pre-wrap;word-break:break-all;">
+API URL: ${API_BASE_URL}
+Build: ${typeof CONFIG !== 'undefined' && CONFIG.BUILD_TIME ? CONFIG.BUILD_TIME : 'unknown'}
+User Agent: ${navigator.userAgent}
+Online: ${navigator.onLine}
+---
+${debugLogs.join('\\n')}
+            </div>
+            <button onclick="testConnectionNow()" style="width:100%;padding:15px;margin-top:10px;border:none;background:#10b981;color:white;border-radius:5px;font-size:16px;font-weight:bold;">Test Connection</button>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+// Test connection function
+async function testConnectionNow() {
+    console.log('=== Testing Connection ===');
+    console.log('Testing URL:', API_BASE_URL + '/api/get-latest-data?limit=1');
+    
+    try {
+        const result = await apiRequest('/api/get-latest-data?limit=1');
+        console.log('Connection Test: SUCCESS');
+        console.log('Data received:', JSON.stringify(result));
+        alert('✅ Connection Success!\\n\\nReceived: ' + JSON.stringify(result).substring(0, 100) + '...');
+    } catch (error) {
+        console.error('Connection Test: FAILED');
+        console.error('Error:', error.message);
+        alert('❌ Connection Failed!\\n\\nError: ' + error.message + '\\n\\nCheck debug console for details.');
+    }
+}
+
+// Helper function untuk fetch dengan error handling
+async function apiRequest(endpoint, options = {}) {
+    const url = `${API_BASE_URL}${endpoint}`;
+    console.log('API Request:', url);
+    
+    try {
+        const response = await fetch(url, {
+            ...options,
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+        
+        console.log('Response status:', response.status);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('Response data:', data);
+        return data;
+    } catch (error) {
+        console.error('API Request Error:', error);
+        console.error('URL was:', url);
+        throw error;
+    }
+}
+
 // Landing Page Functions
 function showPinLogin() {
     document.getElementById('landingScreen').classList.remove('active');
@@ -18,6 +118,28 @@ function showLanding() {
     updatePinDisplay();
 }
 
+// Setup debug trigger (long press on brand name)
+document.addEventListener('DOMContentLoaded', function() {
+    let longPressTimer;
+    const brandName = document.querySelector('.brand-name');
+    
+    if (brandName) {
+        brandName.addEventListener('touchstart', function() {
+            longPressTimer = setTimeout(function() {
+                showDebugLogs();
+            }, 3000); // 3 seconds long press
+        });
+        
+        brandName.addEventListener('touchend', function() {
+            clearTimeout(longPressTimer);
+        });
+        
+        brandName.addEventListener('touchmove', function() {
+            clearTimeout(longPressTimer);
+        });
+    }
+});
+
 // PIN Login
 function enterPin(num) {
     if (currentPin.length < 4) {
@@ -27,6 +149,13 @@ function enterPin(num) {
         if (currentPin.length === 4) {
             setTimeout(checkPin, 300);
         }
+    }
+}
+
+function deletePin() {
+    if (currentPin.length > 0) {
+        currentPin = currentPin.slice(0, -1);
+        updatePinDisplay();
     }
 }
 
@@ -44,8 +173,10 @@ function updatePinDisplay() {
 }
 
 function checkPin() {
-    // Default PIN is 1234
-    if (currentPin === '1234') {
+    // Default PIN from config or fallback to 1234
+    const defaultPin = (typeof CONFIG !== 'undefined' && CONFIG.DEFAULT_PIN) ? CONFIG.DEFAULT_PIN : '1234';
+    
+    if (currentPin === defaultPin) {
         document.getElementById('loginScreen').classList.remove('active');
         document.getElementById('mainScreen').classList.add('active');
         loadDashboardStats();
@@ -53,7 +184,7 @@ function checkPin() {
         currentPin = '';
         updatePinDisplay();
     } else {
-        alert('Incorrect PIN. Default PIN is 1234');
+        alert(`Incorrect PIN. Default PIN is ${defaultPin}`);
         currentPin = '';
         updatePinDisplay();
     }
@@ -164,8 +295,7 @@ function showLogout() {
 // Dashboard Stats
 async function loadDashboardStats() {
     try {
-        const response = await fetch('/api/get-latest-data?limit=100');
-        const result = await response.json();
+        const result = await apiRequest('/api/get-latest-data?limit=100');
         
         if (result.success && result.data) {
             const data = result.data;
@@ -197,13 +327,10 @@ document.getElementById('saveDataForm').addEventListener('submit', async (e) => 
     };
     
     try {
-        const response = await fetch('/api/save-data', {
+        const result = await apiRequest('/api/save-data', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
-        
-        const result = await response.json();
         const resultDiv = document.getElementById('saveResult');
         
         if (result.success) {
@@ -234,8 +361,7 @@ async function testGetLatestData() {
     const limit = document.getElementById('limitInput').value;
     
     try {
-        const response = await fetch(`/api/get-latest-data?limit=${limit}`);
-        const result = await response.json();
+        const result = await apiRequest(`/api/get-latest-data?limit=${limit}`);
         
         document.getElementById('apiResponseCard').style.display = 'block';
         document.getElementById('apiResponse').textContent = JSON.stringify(result, null, 2);
@@ -249,8 +375,7 @@ async function testGetDataById() {
     const id = document.getElementById('dataIdInput').value;
     
     try {
-        const response = await fetch(`/api/get-data?id=${id}`);
-        const result = await response.json();
+        const result = await apiRequest(`/api/get-data?id=${id}`);
         
         document.getElementById('apiResponseCard').style.display = 'block';
         document.getElementById('apiResponse').textContent = JSON.stringify(result, null, 2);
@@ -299,8 +424,7 @@ function toggleSensorDetails() {
 
 async function analyzeLatestData() {
     try {
-        const response = await fetch('/api/get-latest-data?limit=10');
-        const result = await response.json();
+        const result = await apiRequest('/api/get-latest-data?limit=10');
         
         if (result.success && result.data && result.data.length > 0) {
             analysisData = result.data;
@@ -477,8 +601,7 @@ function updateAnalysisChart() {
 // Recommendation Functions
 async function analyzeRecommendations() {
     try {
-        const response = await fetch('/api/get-latest-data?limit=10');
-        const result = await response.json();
+        const result = await apiRequest('/api/get-latest-data?limit=10');
         
         if (result.success && result.data && result.data.length > 0) {
             analysisData = result.data;
