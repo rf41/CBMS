@@ -1,0 +1,16 @@
+{
+	"appId": "com.teddytalk.cbms",
+	"appName": "TeddyTalk CBMS",
+	"webDir": "app",
+	"server": {
+		"allowNavigation": [
+			"*"
+		],
+		"androidScheme": "https"
+	},
+	"android": {
+		"allowMixedContent": true,
+		"backgroundColor": "#f5f1e8",
+		"useLegacyBridge": false
+	}
+}

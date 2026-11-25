@@ -4,14 +4,15 @@
   "description": "Child Behavior Monitoring System - Dynamic Web with Vercel Postgres",
   "main": "index.html",
   "scripts": {
-    "dev": "vercel dev",
+    "dev": "node server.js",
     "deploy": "vercel --prod"
   },
   "dependencies": {
-    "@vercel/postgres": "^0.5.1"
+    "@vercel/postgres": "^0.5.1",
+    "express": "^5.2.1"
   },
   "devDependencies": {
-    "vercel": "^33.0.0"
+    "vercel": "^58.1.0"
   },
   "keywords": [
     "cbms",

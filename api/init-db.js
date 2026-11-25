@@ -15,9 +15,16 @@ module.exports = async function handler(req, res) {
         touch_intensity VARCHAR(20) NOT NULL CHECK (touch_intensity IN ('low', 'normal', 'high')),
         movement_pattern VARCHAR(20) NOT NULL CHECK (movement_pattern IN ('normal', 'repetitive', 'extreme')),
         sound_activity VARCHAR(20) NOT NULL CHECK (sound_activity IN ('normal', 'frequent', 'intense')),
+        location VARCHAR(255) DEFAULT 'Unknown',
         device_id VARCHAR(50) DEFAULT 'ESP32_001',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
+    `;
+
+    // Alter table to add location if it exists from previous version
+    await sql`
+      ALTER TABLE sensor_data 
+      ADD COLUMN IF NOT EXISTS location VARCHAR(255) DEFAULT 'Unknown'
     `;
 
     // Create index for better performance

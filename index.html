@@ -140,6 +140,14 @@
                             </div>
                         </div>
 
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: 600;">Location (GPS)</label>
+                            <div style="display: flex; gap: 10px;">
+                                <input type="text" id="locationInput" placeholder="Click button to get GPS location" readonly required style="flex-grow: 1; padding: 10px; border: 2px solid #e5e7eb; border-radius: 8px; background-color: #f3f4f6;">
+                                <button type="button" class="btn btn-secondary" onclick="getGPSLocation()" style="white-space: nowrap;">📍 Get GPS</button>
+                            </div>
+                        </div>
+
                         <button type="submit" class="btn btn-primary" style="width: 100%;">Save Data to Database</button>
                     </form>
                     <div id="saveResult" style="margin-top: 15px; padding: 15px; border-radius: 8px; display: none;"></div>
@@ -326,6 +334,18 @@
                         <div class="sensor-value" id="soundValue">--</div>
                         <div class="sensor-unit"></div>
                         <div class="sensor-status" id="soundStatus"></div>
+                    </div>
+
+                    <!-- Location Tracking -->
+                    <div class="card sensor-card" style="grid-column: 1 / -1;">
+                        <div class="sensor-header">
+                            <h3>📍 Last Known Location</h3>
+                        </div>
+                        <div class="sensor-value" id="locationValue" style="font-size: 18px; margin-top: 10px;">--</div>
+                        <div class="sensor-unit"></div>
+                        <div class="sensor-status" id="locationStatus">
+                            <a id="locationLink" href="#" target="_blank" style="display: none; color: #2563eb; text-decoration: underline; margin-top: 5px;">View on Map</a>
+                        </div>
                     </div>
                 </div>
 

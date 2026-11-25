@@ -215,6 +215,7 @@ async function handleSaveDataForm(e) {
         touchIntensity: document.getElementById('touchInput').value,
         movementPattern: document.getElementById('movementInput').value,
         soundActivity: document.getElementById('soundInput').value,
+        location: document.getElementById('locationInput').value || 'Unknown',
         deviceId: 'WEB_APP'
     };
 
@@ -246,6 +247,30 @@ async function handleSaveDataForm(e) {
         saveResult.style.background = '#fee2e2';
         saveResult.style.color = '#991b1b';
         saveResult.innerHTML = `<strong>✗ Error:</strong> ${error.message}`;
+    }
+}
+
+// Get GPS Location Function
+function getGPSLocation() {
+    const locationInput = document.getElementById('locationInput');
+    locationInput.value = 'Fetching location...';
+    
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                locationInput.value = `${lat},${lng}`;
+            },
+            (error) => {
+                locationInput.value = 'Failed to get location';
+                console.error('Error getting location:', error);
+                alert('Please enable location services or check your browser permissions.');
+            }
+        );
+    } else {
+        locationInput.value = 'Geolocation not supported';
+        alert('Geolocation is not supported by your browser.');
     }
 }
 
@@ -348,7 +373,8 @@ async function analyzeLatestData() {
             bodyTemperature: parseFloat(latestData.body_temperature),
             touchIntensity: latestData.touch_intensity,
             movementPattern: latestData.movement_pattern,
-            soundActivity: latestData.sound_activity
+            soundActivity: latestData.sound_activity,
+            location: latestData.location || 'Unknown'
         };
         
         displayLatestAnalysis(formattedLatestData, riskScores[riskScores.length - 1]);
@@ -404,6 +430,22 @@ function displayLatestAnalysis(data, riskScore) {
     analyzeTouchIntensity(data.touchIntensity);
     analyzeMovementPattern(data.movementPattern);
     analyzeSoundActivity(data.soundActivity);
+    
+    // Display Location
+    const locationValue = document.getElementById('locationValue');
+    const locationLink = document.getElementById('locationLink');
+    if (locationValue) {
+        if (data.location && data.location !== 'Unknown' && data.location.includes(',')) {
+            locationValue.textContent = data.location;
+            if (locationLink) {
+                locationLink.href = `https://www.google.com/maps?q=${data.location}`;
+                locationLink.style.display = 'inline-block';
+            }
+        } else {
+            locationValue.textContent = data.location || 'Unknown';
+            if (locationLink) locationLink.style.display = 'none';
+        }
+    }
 
     // Display risk score
     scoreValue.textContent = riskScore;

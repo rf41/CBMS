@@ -16,7 +16,7 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const { heartRate, bodyTemperature, touchIntensity, movementPattern, soundActivity, deviceId } = req.body;
+    const { heartRate, bodyTemperature, touchIntensity, movementPattern, soundActivity, location, deviceId } = req.body;
 
     // Validasi data
     if (!heartRate || !bodyTemperature || !touchIntensity || !movementPattern || !soundActivity) {
@@ -55,6 +55,7 @@ module.exports = async function handler(req, res) {
         touch_intensity, 
         movement_pattern, 
         sound_activity,
+        location,
         device_id,
         created_at
       ) VALUES (
@@ -63,6 +64,7 @@ module.exports = async function handler(req, res) {
         ${touchIntensity.toLowerCase()}, 
         ${movementPattern.toLowerCase()}, 
         ${soundActivity.toLowerCase()},
+        ${location || 'Unknown'},
         ${deviceId || 'ESP32_001'},
         NOW()
       )

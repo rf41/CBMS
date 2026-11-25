@@ -322,6 +322,13 @@
                                 <option value="intense">Intense</option>
                             </select>
                         </div>
+                        <div class="form-group-api">
+                            <label>Location (GPS)</label>
+                            <div style="display: flex; gap: 10px;">
+                                <input type="text" id="locationInput" placeholder="Click button to get GPS location" readonly required style="flex-grow: 1; background-color: #f3f4f6;">
+                                <button type="button" class="btn-api-secondary" onclick="getGPSLocation()" style="width: auto; padding: 10px 15px;">📍 GPS</button>
+                            </div>
+                        </div>
                         <button type="submit" class="btn-api-primary">Save Data to Database</button>
                     </form>
                     <div id="saveResult" class="result-message"></div>
@@ -490,6 +497,12 @@
                                 <div class="sensor-icon-analysis">🔊</div>
                                 <h4>Sound Activity</h4>
                                 <div class="sensor-value-analysis" id="soundValue">--</div>
+                            </div>
+                            <div class="sensor-card-analysis" style="grid-column: 1 / -1;">
+                                <div class="sensor-icon-analysis">📍</div>
+                                <h4>Last Known Location</h4>
+                                <div class="sensor-value-analysis" id="locationValue" style="font-size: 16px; margin-top: 5px;">--</div>
+                                <a id="locationLink" href="#" target="_blank" style="display: none; color: #2563eb; text-decoration: underline; margin-top: 5px; font-size: 14px;">View on Map</a>
                             </div>
                         </div>
                     </div>
